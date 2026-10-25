@@ -245,7 +245,8 @@ input { font: inherit; }
 }
 .hero__cta { margin-top: var(--s-400); display: flex; gap: var(--s-200); }
 .hero__facts { margin-top: var(--s-600); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-200); }
-.hero__facts dt { font-size: 12px; line-height: 16px; color: var(--ink-3); }
+.hero__facts dt { font-size: 12px; line-height: 16px; color: var(--ink-3); min-height: 16px; }
+@media (max-width: 600px) { .hero__facts dt { min-height: 32px; } }
 .hero__facts dd { margin: var(--s-50) 0 0; font-family: var(--mono); font-size: 24px; line-height: 32px; color: var(--ink); }
 .proof {
   margin-top: var(--s-300); font-size: 14px; line-height: 20px; color: var(--ink-3);
