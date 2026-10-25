@@ -195,7 +195,8 @@ input { font: inherit; }
 }
 .overlay__links { display: flex; flex-direction: column; gap: var(--s-300); }
 .overlay__links a {
-  display: inline-block; font-size: 30px; line-height: 36px; font-weight: 500; color: var(--ink);
+  display: inline-block; padding-block: var(--s-50);
+  font-size: 30px; line-height: 36px; font-weight: 500; color: var(--ink);
   opacity: 0; transform: translateY(48px);
   transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease);
 }
