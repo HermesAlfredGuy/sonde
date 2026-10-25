@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://sonde.energy/sitemap.xml
+Sitemap: https://hermesalfredguy.github.io/sonde/sitemap.xml

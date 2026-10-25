@@ -1,42 +1,36 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Terms — Sonde</title>
-  <meta name="description" content="The terms a Sonde pilot runs under, in plain language." />
-  <meta name="theme-color" content="#131209" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <style>
-    :root { --ground:#131209; --ink:#f2f0ec; --ink-2:#a8a49b; --ink-3:#8b8779; --accent:#ffb020; --line:#313131; }
-    * { box-sizing: border-box; }
-    body { margin:0; background:var(--ground); color:var(--ink); font:400 16px/1.65 "Geist Variable","Helvetica Neue",Arial,sans-serif; }
-    main { max-width: 720px; margin: 0 auto; padding: 96px 24px 128px; }
-    a { color: var(--accent); text-decoration: none; }
-    h1 { font-size: 44px; letter-spacing: -0.04em; line-height: 1.05; margin: 24px 0 8px; font-weight: 500; }
-    h2 { font-size: 20px; letter-spacing: -0.02em; margin: 40px 0 8px; font-weight: 500; }
-    p, li { color: var(--ink-2); }
-    .back { font-family: ui-monospace, monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
-    .meta { font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink-3); }
-    hr { border: 0; border-top: 1px solid var(--line); margin: 40px 0; }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Terms — Sonde</title>
+<meta name="description" content="How a six week Sonde pilot runs, in plain language." />
+<meta name="theme-color" content="#131209" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .doc { padding: var(--s-900) 0; max-width: 720px; }
+  .doc h1 { margin-top: var(--s-200); font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .doc h2 { margin-top: var(--s-600); font-size: 20px; line-height: 28px; font-weight: 600; color: var(--ink); }
+  .doc p { margin-top: var(--s-100); }
+  .doc .back { display: inline-flex; min-height: 44px; align-items: center; }
+</style>
 </head>
 <body>
-  <main>
-    <a class="back" href="/">← Sonde</a>
-    <h1>Terms</h1>
-    <p class="meta">Last updated 12 September 2026</p>
-    <p>Sonde is a fictional product. These terms describe how a real pilot would be run, for the purposes of the design study.</p>
-    <h2>The pilot</h2>
-    <p>Six weeks, one asset, read only. No card is taken and no procurement process is required. Either side can stop at the end of any week.</p>
-    <h2>Approval</h2>
-    <p>Writes only happen through the gate, with a named approver from your organisation. Sonde cannot disable the gate, and cannot approve on your behalf.</p>
-    <h2>Your data</h2>
-    <p>You keep ownership of every row, query and log. On exit we hand over the audit trail and delete our copies within 30 days.</p>
-    <h2>Availability</h2>
-    <p>Pilots run with a named engineer and a four hour response window during business hours, Central Time.</p>
-    <hr />
-    <p class="meta">Questions: field@sonde.energy</p>
-  </main>
+<main class="wrap doc">
+  <a class="back label" href="./">← Sonde</a>
+  <h1>Terms</h1>
+  <p class="label">Last updated 12 September 2026</p>
+  <p>Sonde is a concept build, so these terms describe the pilot as it would run rather than a contract in force.</p>
+  <h2>The pilot</h2>
+  <p>Six weeks on one asset, connected to a replica. No card is taken and no procurement process is required. Either side can stop at the end of any week.</p>
+  <h2>Approval</h2>
+  <p>Writes happen only through the gate, with a named approver from your organisation. Sonde cannot disable the gate and cannot approve on your behalf.</p>
+  <h2>Your data</h2>
+  <p>You keep ownership of every row, query and log. On exit we hand over the audit trail and delete our copies inside 30 days.</p>
+  <h2>After the pilot</h2>
+  <p>Priced per asset, fixed for the first year. No seat count, no per query fee.</p>
+  <p class="label">hello@sonde.energy</p>
+</main>
 </body>
 </html>
