@@ -314,7 +314,7 @@ input { font: inherit; }
   transition: background var(--t-slow) var(--ease), border-color var(--t-slow) var(--ease);
 }
 .gate__icon { width: 16px; height: 16px; color: var(--ink-2); }
-.gate__text { font-size: 14px; line-height: 20px; color: var(--ink-2); flex: 1 1 auto; }
+.gate__text { font-size: 14px; line-height: 20px; color: var(--ink); flex: 1 1 auto; }
 .chip {
   font-family: var(--mono); font-size: 12px; line-height: 16px;
   padding: var(--s-25) var(--s-75); border-radius: var(--r-full);
