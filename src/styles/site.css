@@ -603,9 +603,9 @@
   .schema__list li[data-on="true"] { border-color: rgba(255, 176, 32, 0.45); }
   .schema__list li em { display: none; }
   .run { padding: 12px 12px 0; }
-  .run__sql { font-size: 10.5px; height: 148px; }
   .run__result { grid-template-columns: minmax(0, 1fr); }
-  .spark { display: none; }
+  .spark { display: flex; }
+  .spark svg { height: 44px; }
   .console__foot { flex-direction: column; gap: 2px; }
   .console__caption { text-align: left; }
   .cta__inner { max-width: 100%; }
