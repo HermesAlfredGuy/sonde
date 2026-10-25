@@ -569,9 +569,13 @@ body::after {
 .spot:hover::before { opacity: 1; }
 
 /* hero headline arrives line by line, from behind a mask */
-.hero__h .line { display: block; overflow: hidden; }
+.hero__h .line {
+  display: block; overflow: hidden;
+  /* the mask needs to clear descenders on a 1.0 line-height display face */
+  padding-block-end: 0.14em; margin-block-end: -0.14em;
+}
 .hero__h .line > span {
-  display: block; transform: translateY(110%);
+  display: block; transform: translateY(130%);
   animation: line-up 1000ms var(--ease) forwards;
 }
 .hero__h .line:nth-child(1) > span { animation-delay: 80ms; }
