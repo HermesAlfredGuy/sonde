@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy — Sonde</title>
+<meta name="description" content="What Sonde reads, what it keeps, and how long a run log lives." />
+<meta name="theme-color" content="#131209" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .doc { padding: var(--s-900) 0; max-width: 720px; }
+  .doc h1 { margin-top: var(--s-200); font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .doc h2 { margin-top: var(--s-600); font-size: 20px; line-height: 28px; font-weight: 600; color: var(--ink); }
+  .doc p { margin-top: var(--s-100); }
+  .doc .back { display: inline-flex; min-height: 44px; align-items: center; }
+</style>
+</head>
+<body>
+<main class="wrap doc">
+  <a class="back label" href="./">← Sonde</a>
+  <h1>Privacy</h1>
+  <p class="label">Last updated 12 September 2026</p>
+  <p>Sonde is a concept build. This page shows how a real pilot would handle data, written the way the product behaves.</p>
+  <h2>What the agent reads</h2>
+  <p>Schema, table and column names, column types and row counts from a replica. Row data stays in your network unless you switch row context on for a single run, and the run log records when you did.</p>
+  <h2>What we keep</h2>
+  <p>The question, the SQL, the tables it read, the row count, the elapsed time and the approver name. Run logs are kept 90 days and can be exported as SQL or CSV at any point.</p>
+  <h2>What we never do</h2>
+  <p>No training on your queries, no shared model endpoint outside the one you approve, no advertising identifiers, no third party analytics on this site.</p>
+  <h2>Deletion</h2>
+  <p>Ask and we delete the run log and any pilot notes inside 30 days. The audit trail you exported stays yours.</p>
+  <p class="label">hello@sonde.energy</p>
+</main>
+</body>
+</html>
