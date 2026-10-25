@@ -20,3 +20,6 @@ npm notice run 'vite' --port 5199 --host 0.0.0.0
 2:09:46 PM [vite] (client) hmr update /src/styles/site.css
 2:10:30 PM [vite] (client) page reload src/ui.js
 2:11:48 PM [vite] (client) hmr update /src/styles/site.css
+2:16:35 PM [vite] (client) hmr update /src/styles/site.css
+2:16:40 PM [vite] (client) page reload src/motion/console.js
+2:16:57 PM [vite] (client) hmr update /src/styles/site.css

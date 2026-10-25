@@ -6,13 +6,10 @@ const QUESTION = 'Which wells in Sabine Ridge jumped water cut this quarter, and
 
 const SQL = `-- wells above 45% water cut, allocation checked
 with p as (
-  select well_id, day,
-         water_bbl / nullif(oil_bbl + water_bbl, 0) as wc
-  from production_daily
-  where day >= current_date - interval '90 days'
+  select well_id, day, water_bbl / nullif(oil_bbl + water_bbl, 0) as wc
+  from production_daily where day >= current_date - interval '90 days'
 )
-select p.well_id, round(p.wc * 100, 1) as wc_pct,
-       round(a.alloc - a.meter, 1) as delta
+select p.well_id, round(p.wc * 100, 1) as wc_pct, round(a.alloc - a.meter, 1) as delta
 from p join allocations a using (well_id, day)
 where p.wc > 0.45 order by delta desc limit 12;`;
 
