@@ -243,6 +243,34 @@ if (win) {
   }, { threshold: 0.2 }).observe(win);
 }
 
+
+/* ---------------- cursor spotlight on the sealed surfaces ---------------- */
+const spotTargets = [...document.querySelectorAll('.window, .card, .ledger, .log, .gate-card')];
+for (const el of spotTargets) {
+  el.classList.add('spot');
+  let frame = 0;
+  el.addEventListener('pointermove', (event) => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect();
+      el.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      el.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      frame = 0;
+    });
+  });
+}
+
+/* ---------------- magnetic primary actions ---------------- */
+for (const btn of document.querySelectorAll('.btn--primary')) {
+  btn.addEventListener('pointermove', (event) => {
+    const rect = btn.getBoundingClientRect();
+    const dx = (event.clientX - rect.left - rect.width / 2) / rect.width;
+    const dy = (event.clientY - rect.top - rect.height / 2) / rect.height;
+    btn.style.transform = `translate(${dx * 5}px, ${dy * 4}px)`;
+  });
+  btn.addEventListener('pointerleave', () => { btn.style.transform = ''; });
+}
+
 /* ---------------- form ---------------- */
 const form = document.querySelector('[data-form]');
 if (form) {

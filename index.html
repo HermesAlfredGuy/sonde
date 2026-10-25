@@ -78,7 +78,12 @@
     <div class="wrap hero__grid">
       <div class="hero__copy">
         <p class="label reveal">Database agent for oil and gas</p>
-        <h1 class="hero__h reveal" id="hero-h">Ask your wells a question.<br />Get the query that answered it.</h1>
+        <h1 class="hero__h" id="hero-h">
+          <span class="line"><span>Ask your wells</span></span>
+          <span class="line"><span>a question.</span></span>
+          <span class="line"><span>Get the query</span></span>
+          <span class="line"><span>that answered it.</span></span>
+        </h1>
         <p class="lede reveal">Sonde reads your historian, SCADA tags and well schemas, writes the SQL itself, and stops at a named approver before a row changes. A pilot runs six weeks on one asset with no procurement.</p>
         <p class="hero__cta reveal"><a class="btn btn--primary" href="#pilot">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></a></p>
         <dl class="hero__facts reveal">
@@ -113,6 +118,12 @@
         </div>
         <figcaption class="window__foot mono" id="window-cap">3 rows · delta_bbl desc · replica read · writes only through the gate</figcaption>
       </figure>
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__track">
+          <span>sab-14h · wc 61.2% · Δ +412.6 bbl</span><span>sab-22h · wc 52.8% · Δ +98.4 bbl</span><span>sab-31h · wc 47.1% · Δ +12.2 bbl</span><span>run 0x41c · 41.0 s · approved by M. Vega</span><span>replica · 9.7M rows · 0 ungated writes</span>
+          <span>sab-14h · wc 61.2% · Δ +412.6 bbl</span><span>sab-22h · wc 52.8% · Δ +98.4 bbl</span><span>sab-31h · wc 47.1% · Δ +12.2 bbl</span><span>run 0x41c · 41.0 s · approved by M. Vega</span><span>replica · 9.7M rows · 0 ungated writes</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -124,7 +135,7 @@
 
   <section class="section" id="problem">
     <div class="wrap">
-      <h2 class="reveal">The question is simple. The queue is not.</h2>
+      <h2 class="reveal" data-idx="01">The question is simple. The queue is not.</h2>
       <div class="two-col">
         <p class="reveal">A production engineer needs water cut on twelve wells before the morning call. The ticket goes in on Monday. The answer comes back on Thursday, in a spreadsheet, with no SQL attached. Nobody can say which allocation table it came from.</p>
         <p class="reveal">Sonde answers in the shape the question was asked: the tables it read, the SQL it wrote, three rows, the time it took, and the person who approved the write. Nothing leaves your network.</p>
@@ -134,25 +145,26 @@
 
   <section class="section" id="benefits" aria-labelledby="benefits-h">
     <div class="wrap">
-      <h2 class="reveal" id="benefits-h">What a production engineer gets on Monday</h2>
+      <h2 class="reveal" data-idx="02" id="benefits-h">What a production engineer gets on Monday</h2>
       <div class="cards">
         <article class="card reveal">
-          <span class="tile" aria-hidden="true"><span class="icon icon--clock"></span></span>
+          <p class="card__label mono"><span class="icon icon--clock" aria-hidden="true"></span>Median question to rows</p>
+          <p class="card__metric mono">41<span>s</span></p>
           <h3>Minutes, not sprints</h3>
-          <p>Median 41 seconds from question to rows against a 9.7M row replica. The morning call stops being the deadline.</p>
+          <p>Against a 9.7M row replica. The morning call stops being the deadline.</p>
         </article>
         <article class="card reveal">
-          <span class="tile" aria-hidden="true"><span class="icon icon--database"></span></span>
+          <p class="card__label mono"><span class="icon icon--database" aria-hidden="true"></span>Lineage</p>
           <h3>Every number traces back</h3>
           <p>Each answer keeps the SQL, the tables it read and the row count, so a number can be defended in a review.</p>
         </article>
         <article class="card reveal">
-          <span class="tile" aria-hidden="true"><span class="icon icon--stamp"></span></span>
+          <p class="card__label mono"><span class="icon icon--stamp" aria-hidden="true"></span>Approval</p>
           <h3>Writes stop at a person</h3>
           <p>100% of writes wait for a named approver. 0 have shipped without one, across every pilot asset.</p>
         </article>
         <article class="card reveal">
-          <span class="tile" aria-hidden="true"><span class="icon icon--shield"></span></span>
+          <p class="card__label mono"><span class="icon icon--shield" aria-hidden="true"></span>Fit</p>
           <h3>Built on the schema you have</h3>
           <p>Historian, SCADA tags, allocations and decline models as they already are. No migration, no new warehouse.</p>
         </article>
@@ -162,7 +174,7 @@
 
   <section class="section" id="how" aria-labelledby="how-h">
     <div class="wrap">
-      <h2 class="reveal" id="how-h">Three steps, and the first one is a credential</h2>
+      <h2 class="reveal" data-idx="03" id="how-h">Three steps, and the first one is a credential</h2>
       <div class="how__grid">
       <ol class="steps">
         <li class="step reveal">
@@ -206,7 +218,7 @@
 
   <section class="section" id="proof" aria-labelledby="proof-h">
     <div class="wrap">
-      <h2 class="reveal" id="proof-h">What it found in the first week</h2>
+      <h2 class="reveal" id="proof-h" data-idx="04">What it found in the first week</h2>
       <div class="proof__grid">
         <figure class="quote reveal">
           <blockquote>
@@ -226,7 +238,7 @@
   <section class="section" id="security" aria-labelledby="security-h">
     <div class="wrap sec__grid">
       <div>
-        <h2 class="reveal" id="security-h">Reads on a replica. Writes through a gate.</h2>
+        <h2 class="reveal" data-idx="05" id="security-h">Reads on a replica. Writes through a gate.</h2>
         <p class="reveal">The agent is useful because it can act. It is safe to run because it cannot act alone: every write is a single statement, dry run first, signed off by a person whose name lands in the log.</p>
         <ul class="checks reveal">
           <li><span class="icon icon--check" aria-hidden="true"></span>Replica access only. Row data stays put unless you opt in per run.</li>
@@ -264,7 +276,7 @@
     <div class="wrap">
       <div class="pilot reveal">
         <div class="pilot__copy">
-          <h2 id="pilot-h">Six weeks, one asset, nothing to sign.</h2>
+          <h2 data-idx="06" id="pilot-h">Six weeks, one asset, nothing to sign.</h2>
           <p>Bring one asset and a replica credential. We connect, run your first ten questions with you, and hand back the run log. No card, no procurement, stop at the end of any week.</p>
           <ul class="checks checks--tight">
             <li><span class="icon icon--check" aria-hidden="true"></span>No credit card and no security questionnaire to start.</li>
@@ -287,7 +299,7 @@
 
   <section class="section" id="faq" aria-labelledby="faq-h">
     <div class="wrap">
-      <h2 class="reveal" id="faq-h">The ones data teams ask first</h2>
+      <h2 class="reveal" data-idx="07" id="faq-h">The ones data teams ask first</h2>
       <div class="faq" data-faq>
         <details class="q">
           <summary><span>Does Sonde read row data?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
