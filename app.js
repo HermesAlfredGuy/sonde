@@ -10,6 +10,14 @@ const revealObserver = new IntersectionObserver((entries) => {
   }
 }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
 document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+// safety: anything already in the first viewport is shown at once, so a capture or a slow
+// observer callback can never leave the page looking half built
+window.addEventListener('load', () => {
+  document.querySelectorAll('.reveal').forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('is-in');
+  });
+}, { once: true });
 
 /* ---------------- tagline: each word crosses a trigger line and resolves ---------------- */
 const tagline = document.querySelector('[data-words]');
@@ -100,21 +108,23 @@ const spy = new IntersectionObserver((entries) => {
 sections.forEach((section) => spy.observe(section));
 
 /* ---------------- the run inside the product window ---------------- */
-const QUESTION = 'Which wells in Sabine Ridge jumped water cut this quarter, and do their allocations reconcile?';
-const SQL = `-- wells above 45% water cut
-with p as (
-  select well_id, day,
-         water_bbl / nullif(oil_bbl + water_bbl, 0) as wc
-  from production_daily
-  where day >= now() - interval '90 days'
+const QUESTION = 'Which wells in Sabine Ridge are over 45% water cut this quarter, and what do their allocations owe?';
+const SQL = `with p as (
+  select well_id, sum(water_bbl)
+       / sum(oil_bbl + water_bbl) as wc
+  from production_daily join wells using (well_id)
+  where day >= date_trunc('quarter', now())
+    and asset = 'Sabine Ridge'
+  group by well_id
 )
-select p.well_id, round(p.wc * 100, 1) as wc_pct,
-       round(a.alloc - a.meter, 1) as delta
-from p join allocations a using (well_id, day)
-where p.wc > 0.45
-order by delta desc limit 12;`;
+select p.well_id, round(max(p.wc) * 100, 1) as wc_pct,
+       round(sum(a.alloc_bbl - a.meter_bbl), 1) as delta_bbl
+from p join allocations a using (well_id)
+where p.wc > 0.45 and a.day >= date_trunc('quarter', now())
+group by p.well_id
+order by delta_bbl desc limit 12;`;
 const KEYWORDS = new Set(['with', 'as', 'select', 'from', 'where', 'join', 'using', 'on', 'order', 'by', 'desc', 'limit', 'interval', 'nullif', 'round', 'now', 'and', 'or']);
-const ROWS = [['sab-14h', '61.2%', '+412.6'], ['sab-22h', '52.8%', '+98.4'], ['kst-07', '47.1%', '−12.2']];
+const ROWS = [['sab-14h', '61.2%', '+412.6'], ['sab-22h', '52.8%', '+98.4'], ['sab-31h', '47.1%', '+12.2']];
 
 const win = document.querySelector('.window');
 const qEl = document.querySelector('[data-q]');
@@ -149,7 +159,7 @@ const resetRun = () => {
   sqlEl.innerHTML = '';
   rowsEl.innerHTML = '';
   gateEl.dataset.gate = 'waiting';
-  gateText.textContent = 'Proposed fix: rewrite allocations for 14 Aug on 2 wells.';
+  gateText.textContent = 'Proposed write: allocations for 14 Aug on 3 wells · dry run pass.';
   gateChip.textContent = 'awaiting approver';
   clockEl.textContent = '00.0 s';
 };
@@ -160,24 +170,27 @@ async function runOnce() {
   clockEl.textContent = '00.0 s';
   for (let i = 1; i <= QUESTION.length; i++) {
     qEl.textContent = QUESTION.slice(0, i);
-    await sleep(16, tk);
+    await sleep(8, tk);
   }
-  const clock = { v: 0 };
+  // the clock tracks real elapsed time of the simulated run, so it never jumps
+  const t0 = performance.now();
+  const target = 2600;
   const tick = setInterval(() => {
-    clock.v = Math.min(41, clock.v + 0.7);
-    clockEl.textContent = `${clock.v.toFixed(1).padStart(4, '0')} s`;
-  }, 120);
+    const progress = Math.min(1, (performance.now() - t0) / target);
+    const value = 41 * (1 - (1 - progress) ** 2);
+    clockEl.textContent = `${value.toFixed(1).padStart(4, '0')} s`;
+  }, 60);
   tk.cancel.push(() => clearInterval(tick));
 
   let typed = '';
   for (const line of SQL.split('\n')) {
     for (let i = 1; i <= line.length; i++) {
       sqlEl.innerHTML = highlight(typed + line.slice(0, i));
-      await sleep(6, tk);
+      await sleep(3, tk);
     }
     typed += `${line}\n`;
     sqlEl.innerHTML = highlight(typed);
-    await sleep(80, tk);
+    await sleep(40, tk);
   }
 
   ROWS.forEach((cells, index) => {
@@ -186,16 +199,16 @@ async function runOnce() {
     rowsEl.append(tr);
     setTimeout(() => tr.classList.add('is-in'), 80 + index * 140);
   });
-  await sleep(600, tk);
+  await sleep(400, tk);
   clearInterval(tick);
   clockEl.textContent = '41.0 s';
 
-  await sleep(2200, tk);
+  await sleep(1600, tk);
   gateEl.dataset.gate = 'approved';
   gateChip.textContent = 'approved';
-  gateText.textContent = 'Applied: 2 allocations rewritten for 14 Aug, rollback stored.';
+  gateText.textContent = 'Approved by M. Vega 14 Aug 14:32 · rollback sha256:3f2a91c9… stored.';
 
-  await sleep(5200, tk);
+  await sleep(4000, tk);
 }
 
 async function loop() {

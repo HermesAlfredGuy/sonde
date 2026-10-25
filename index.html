@@ -79,9 +79,14 @@
       <div class="hero__copy">
         <p class="label reveal">Database agent for oil and gas</p>
         <h1 class="hero__h reveal" id="hero-h">Ask your wells a question.<br />Get the query that answered it.</h1>
-        <p class="lede reveal">Sonde reads your historian, SCADA tags and well schemas, writes the SQL itself, and stops at a named approver before a row changes. Six week pilot on one asset, no procurement.</p>
+        <p class="lede reveal">Sonde reads your historian, SCADA tags and well schemas, writes the SQL itself, and stops at a named approver before a row changes. A pilot runs six weeks on one asset with no procurement.</p>
         <p class="hero__cta reveal"><a class="btn btn--primary" href="#pilot">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></a></p>
-        <p class="proof reveal">3 assets in the Permian and the Montney. Median 41 seconds from question to rows.</p>
+        <dl class="hero__facts reveal">
+          <div><dt>Assets live</dt><dd>3</dd></div>
+          <div><dt>Median time to rows</dt><dd>41 s</dd></div>
+          <div><dt>Ungated writes</dt><dd>0</dd></div>
+        </dl>
+        <p class="proof reveal">Permian, Montney and the Gulf Coast. Replica read only until a named approver signs.</p>
       </div>
 
       <figure class="window reveal" id="product" aria-labelledby="window-cap">
@@ -102,11 +107,11 @@
           </table>
           <div class="gate" data-gate="waiting">
             <span class="icon icon--lock gate__icon" aria-hidden="true"></span>
-            <p class="gate__text" data-gate-text>Proposed fix: rewrite allocations for 14 Aug on 2 wells.</p>
+            <p class="gate__text" data-gate-text>Proposed write: allocations for 14 Aug on 3 wells · dry run pass.</p>
             <span class="chip" data-gate-chip>awaiting approver</span>
           </div>
         </div>
-        <figcaption class="window__foot mono" id="window-cap">replica read · 9.7M rows · no writes without approval</figcaption>
+        <figcaption class="window__foot mono" id="window-cap">3 rows · delta_bbl desc · replica read · writes only through the gate</figcaption>
       </figure>
     </div>
   </section>
@@ -158,6 +163,7 @@
   <section class="section" id="how" aria-labelledby="how-h">
     <div class="wrap">
       <h2 class="reveal" id="how-h">Three steps, and the first one is a credential</h2>
+      <div class="how__grid">
       <ol class="steps">
         <li class="step reveal">
           <span class="mono step__n">01</span>
@@ -181,6 +187,20 @@
           </div>
         </li>
       </ol>
+      <aside class="ledger reveal" aria-label="Run audit trail">
+        <p class="label">run 0x41c · audit trail</p>
+        <ol class="ledger__rows">
+          <li><span class="mono ledger__t">09:41:02</span><span class="ledger__k">read</span><span class="ledger__v">schema · wells, production_daily, allocations</span></li>
+          <li><span class="mono ledger__t">09:41:09</span><span class="ledger__k">plan</span><span class="ledger__v">1 statement · est $0.42</span></li>
+          <li><span class="mono ledger__t">09:41:19</span><span class="ledger__k">query</span><span class="ledger__v">12 rows · replica · 1.2 s</span></li>
+          <li><span class="mono ledger__t">09:41:41</span><span class="ledger__k">gate</span><span class="ledger__v">pending · M. Vega, production data lead</span></li>
+          <li><span class="mono ledger__t">09:42:05</span><span class="ledger__k">approval</span><span class="ledger__v">approved · M. Vega</span></li>
+          <li><span class="mono ledger__t">09:42:07</span><span class="ledger__k">write</span><span class="ledger__v">allocations · 14 Aug · 3 rows · committed</span></li>
+          <li><span class="mono ledger__t">09:42:08</span><span class="ledger__k">rollback</span><span class="ledger__v">sha256:3f2a91c9… stored</span></li>
+        </ol>
+        <p class="ledger__foot">Immutable log · UTC · exportable as SQL or CSV</p>
+      </aside>
+      </div>
     </div>
   </section>
 
@@ -204,18 +224,39 @@
   </section>
 
   <section class="section" id="security" aria-labelledby="security-h">
-    <div class="wrap two-col">
+    <div class="wrap sec__grid">
       <div>
         <h2 class="reveal" id="security-h">Reads on a replica. Writes through a gate.</h2>
         <p class="reveal">The agent is useful because it can act. It is safe to run because it cannot act alone: every write is a single statement, dry run first, signed off by a person whose name lands in the log.</p>
+        <ul class="checks reveal">
+          <li><span class="icon icon--check" aria-hidden="true"></span>Replica access only. Row data stays put unless you opt in per run.</li>
+          <li><span class="icon icon--check" aria-hidden="true"></span>Approver must be a named person in your organisation. Sonde cannot approve for them.</li>
+          <li><span class="icon icon--check" aria-hidden="true"></span>Every write ships with a rollback statement.</li>
+          <li><span class="icon icon--check" aria-hidden="true"></span>Run log kept 90 days, exportable as SQL or CSV.</li>
+          <li><span class="icon icon--check" aria-hidden="true"></span>Runs inside your VPC or on hardware you own.</li>
+        </ul>
       </div>
-      <ul class="checks reveal">
-        <li><span class="icon icon--check" aria-hidden="true"></span>Replica access only. Row data stays put unless you opt in per run.</li>
-        <li><span class="icon icon--check" aria-hidden="true"></span>Approver must be a named person in your organisation. Sonde cannot approve for them.</li>
-        <li><span class="icon icon--check" aria-hidden="true"></span>Every write ships with a rollback statement.</li>
-        <li><span class="icon icon--check" aria-hidden="true"></span>Run log kept 90 days, exportable as SQL or CSV.</li>
-        <li><span class="icon icon--check" aria-hidden="true"></span>Runs inside your VPC or on hardware you own.</li>
-      </ul>
+      <figure class="log reveal">
+        <figcaption class="label">write log · last three writes</figcaption>
+        <ol class="log__rows">
+          <li>
+            <p class="log__head"><span class="mono log__when">2026-08-14 09:42 UTC</span><span class="log__who">Maya Vega · production data lead</span><span class="chip log__state">applied</span></p>
+            <p class="mono log__sql">update allocations set target_pct = 12.0 where id = 4821;</p>
+            <p class="mono log__meta">1 row · dry run pass · rollback sha256:3f2a91c9…</p>
+          </li>
+          <li>
+            <p class="log__head"><span class="mono log__when">2026-08-12 16:10 UTC</span><span class="log__who">Ravi Osei · completions engineer</span><span class="chip log__state">applied</span></p>
+            <p class="mono log__sql">update well_alloc set rate = 0.85 where well_id = 'W-17';</p>
+            <p class="mono log__meta">2 rows · dry run pass · rollback sha256:8b1c40d4…</p>
+          </li>
+          <li>
+            <p class="log__head"><span class="mono log__when">2026-08-11 08:05 UTC</span><span class="log__who">Dalia Ahmed · production engineer</span><span class="chip log__state">rolled back</span></p>
+            <p class="mono log__sql">update production_daily set bbl = 1240 where day = '2026-08-10';</p>
+            <p class="mono log__meta">1 row · reverted 08:19 UTC by Dalia Ahmed · rollback sha256:5e77b2a1…</p>
+          </li>
+        </ol>
+        <p class="log__note">Nothing here was written without a name against it.</p>
+      </figure>
     </div>
   </section>
 
@@ -285,10 +326,22 @@
   </section>
 
   <section class="section cta" aria-labelledby="cta-h">
-    <div class="wrap">
-      <h2 class="reveal" id="cta-h">Ask your wells a question.</h2>
-      <p class="lede reveal">Get the query that answered it, and the name of the person who signed it off.</p>
-      <p class="reveal"><a class="btn btn--primary" href="#pilot">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></a></p>
+    <div class="wrap cta__grid">
+      <div>
+        <h2 class="reveal" id="cta-h">Ask your wells a question.</h2>
+        <p class="lede reveal">Get the query that answered it, and the name of the person who signed it off.</p>
+        <p class="reveal"><a class="btn btn--primary" href="#pilot">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></a></p>
+      </div>
+      <figure class="gate-card reveal">
+        <p class="label">run 0x41c · 14 Aug</p>
+        <p class="gate-card__q">Rewrite allocations for 14 Aug on 3 wells.</p>
+        <div class="gate">
+          <span class="icon icon--lock gate__icon" aria-hidden="true"></span>
+          <p class="gate__text">M. Vega · production data lead</p>
+          <span class="chip">awaiting approver</span>
+        </div>
+        <p class="gate-card__meta mono">rollback 3f2a91c · statement stored · 3 rows</p>
+      </figure>
     </div>
   </section>
 </main>
