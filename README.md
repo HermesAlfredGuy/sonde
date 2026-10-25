@@ -1,47 +1,71 @@
-# web-editorial kit
+# Sonde — landing page
 
-Award-style marketing/portfolio site. Vite 8 + GSAP 3.15 (ScrollTrigger, SplitText) + Lenis.
-Demo content: "Halde", a ceramics atelier. Replace content, keep the system.
+A single-page site for **Sonde**, a fictional database agent that works inside an oil and gas
+operator's own network: it reads the historian, SCADA tags and well schemas, writes and verifies the
+SQL itself, and stops at a named approver before any row changes.
+
+Live: https://hermesalfredguy.github.io/sonde/
+
+## Stack
+
+- Vite 8 + plain ES modules, no framework, one DOM (nothing swaps on hydration)
+- Geist Variable + Geist Mono, self-hosted through `@fontsource` (no Google Fonts request)
+- GSAP 3.15 for the intro, reveals and the console timeline; Lenis for smooth scroll
+- Design tokens in `src/styles/tokens.css`; all copy and markup in `index.html`
+- Built from `/opt/data/kits/web-editorial`; the kit's structure was replaced section by section
+
+## Run
 
 ```bash
-cp -r /opt/data/kits/web-editorial ./my-site && cd my-site && rm -rf node_modules dist && npm install
-npm run dev      # http://localhost:5173
-npm run build    # static dist/ (relative base, deploy anywhere: GitHub Pages, tunnel, Vercel)
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # static output in dist/
+npm run preview
 ```
 
-## Re-theme (one file)
-`src/styles/tokens.css`: palette (6 vars), fonts (display/text/mono), fluid type scale, spacing,
-eases. Swap fonts by installing `@fontsource/<font>` and changing imports at the top of `base.css`.
-**The kit's fonts are placeholders: always swap them.** Run `bash /opt/data/scripts/font-pick.sh <mood> <project>` and change
-the palette too, so no two kit sites look alike.
+## The signature moment
 
-## Motion API (HTML attributes, no JS needed)
-| Attribute | Effect |
-|---|---|
-| `data-split="lines\|words\|chars"` | masked text rise on scroll |
-| `data-split-intro` (with data-split) | plays in the page intro instead of on scroll |
-| `data-intro` | fades/rises in during the intro timeline |
-| `data-reveal="up\|fade\|scale"` + `data-delay` | element entrance on scroll |
-| `data-reveal-group` | children with data-reveal stagger together |
-| `data-scrub-words` | paragraph words brighten as you scroll |
-| `data-parallax="0.15"` | drift relative to scroll |
-| `data-clip` | media wipes in from bottom with zoom-out (put the image inside) |
-| `data-marquee` + `data-speed` / `data-direction` | infinite band reacting to scroll velocity; `data-marquee-toggle` button pauses |
-| `data-magnetic` + `data-strength` | element leans toward pointer (desktop) |
-| `data-cursor="View"` | custom cursor grows into a label over the element |
-| `data-horizontal` (section with `.h-track` of `.h-card`) | pinned horizontal gallery on desktop; swipe row on mobile |
-| `data-counter="2300"` + `data-suffix` / `data-decimals` | count-up when visible |
+The hero console runs one investigation on a loop while it is on screen (it pauses off screen):
+question typed → four plan steps tick as the tables they need light up → the SQL types itself →
+three rows land → the run stops at a human gate → approved → the loop restarts. The elapsed clock
+counts to 41.0 s and the 90-day spark draws the water-cut jump. State is driven by `data-*`
+attributes in `src/motion/console.js`.
 
-Reduced motion: everything collapses to gentle opacity fades (owner preference); marquee stops.
+## Motion
 
-## Section patterns (src/styles/sections.css)
-preloader, nav (difference blend), hero (+ arch art), marquee, statement, horizontal works,
-numbers, process (sticky title, dark section), quote, CTA (magnetic button), footer (giant wordmark).
-Delete what you don't need; don't add uniform card grids.
+Full motion always, per the client's rule: no `prefers-reduced-motion` branch, no toggle. Sequences
+shorten on phones rather than disappearing (the spark sits under the rows instead of beside them).
+Nothing flashes; the only repeating beat is the console loop.
 
-## Images
-Replace `.glaze` art with real/art-directed images: `<div class="h-card__media" data-clip><img src=...></div>`.
-Use AVIF/WebP, width/height attributes, `loading="lazy"` below the fold.
+## What was checked (2026-10-25, against the live URL)
 
-## Check
-`bash /opt/data/scripts/studio-qa/qa.sh web http://127.0.0.1:<port>/` then critique the sheets.
+| Check | Result |
+| --- | --- |
+| Overflow at 360/390/768/1024/1280/1440/1920 | 0 px everywhere |
+| Tap targets under 44 px | none |
+| Text contrast under 4.5:1 (3:1 large) | none, measured on every text node |
+| Layout collisions between cards, tiles, console rows | none |
+| Menu: open, focus trap, Esc, focus returned | pass |
+| Pricing toggle, form validation, FAQ | pass |
+| Console timeline end to end | question 94 chars, SQL 406 chars, 3 rows, gate waiting → approved |
+| Console errors and failed requests on load | none |
+
+Evidence: `docs/qa-2026-10-25.txt`, `docs/capture-2026-10-25.log`; screenshots in `shots/web/`.
+The scripts that produced them live in `../tools/` — `sweep.mjs`, `layout-critic.mjs`,
+`interactions.mjs`, `probe-run.mjs`, `capture.mjs`, `spec-audit.mjs`.
+
+## Limitations, stated plainly
+
+- All content is fictional: no customer, price, metric or quote on this page is real.
+- The console is a scripted replay, not a live query against a database.
+- No Lighthouse run is recorded for this page; the claims above come from the scripts in
+  `../tools/`, not from Lighthouse.
+- Visual review this round was measurement-based (the vision route was rate-limited), so the
+  judgement of the render as an image came from geometry, contrast and density rather than eyes.
+
+## Type and colour
+
+One typeface (Geist) plus Geist Mono for data only; weights 400/500/600, no italics. One accent,
+flare amber `#FFB020`, used for live state, the human gate, the CTA and the console spark — about
+1 % of a desktop viewport and 5 % on a phone. Everything else is ink on a warm near-black ground
+(`#131209`), with hairline rules instead of cards and shadows only on the two floating layers.
