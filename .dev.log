@@ -1,0 +1,22 @@
+npm notice run kit-web-editorial@1.0.0 npx
+npm notice run 'vite' --port 5199 --host 0.0.0.0
+
+  VITE v8.3.2  ready in 183 ms
+
+  ➜  Local:   http://localhost:5199/
+  ➜  Network: http://192.168.100.120:5199/  wlp3s0
+  ➜  Network: http://100.113.213.124:5199/  tailscale0
+  ➜  Network: http://172.18.0.1:5199/       br-f74609ad6ac2
+  ➜  Network: http://172.17.0.1:5199/       docker0
+2:06:22 PM [vite] (client) hmr update /src/styles/site.css
+2:06:22 PM [vite] (client) page reload index.html
+2:06:39 PM [vite] (client) hmr update /src/styles/base.css
+2:06:39 PM [vite] (client) hmr update /src/styles/site.css
+2:07:25 PM [vite] (client) page reload src/motion/console.js
+2:08:09 PM [vite] (client) page reload src/motion/console.js
+2:08:31 PM [vite] (client) page reload index.html
+2:08:31 PM [vite] (client) hmr update /src/styles/site.css
+2:09:23 PM [vite] (client) hmr update /src/styles/site.css
+2:09:46 PM [vite] (client) hmr update /src/styles/site.css
+2:10:30 PM [vite] (client) page reload src/ui.js
+2:11:48 PM [vite] (client) hmr update /src/styles/site.css

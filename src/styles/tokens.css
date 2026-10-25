@@ -1,0 +1,88 @@
+/* ==========================================================================
+   SONDE — design tokens. One file re-themes the whole site.
+
+   Rules this file enforces:
+   - One typeface (Geist) + Geist Mono for data only. No italics, no weight
+     above 600, no serif display face.
+   - One accent (flare amber). Everything else is a neutral step.
+   - Type sizes land on the documented scale at 1440 and halve under 768.
+   - Spacing only from the 8px step list. Radii only from the role list.
+   ========================================================================== */
+:root {
+  /* --- palette: instrument panel, warm near black, one flare --- */
+  --ground: #131209;         /* page */
+  --panel: #1f1f1f;          /* panels, console */
+  --raised: #272727;         /* raised cells inside a panel */
+  --line: #313131;           /* hairline */
+  --line-strong: #3e3e3e;    /* hover / emphasis border */
+  --ink: #f2f0ec;            /* primary text */
+  --ink-2: #a8a49b;          /* secondary text */
+  --ink-3: #8b8779;          /* mono dim, captions */
+  --accent: #ffb020;         /* the only accent: live state, CTA, key data */
+  --accent-2: #ffc861;       /* accent on dark rows, hover */
+  --accent-ink: #1a1206;     /* text on amber */
+  /* status: product mock only, muted */
+  --ok: #7fae72;
+  --warn: #d9824a;
+  --fail: #c4574a;
+
+  /* --- type --- */
+  --font-display: "Geist Variable", "Helvetica Neue", Arial, sans-serif;
+  --font-text: "Geist Variable", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* scale: 96 72 60 48 36 30 24 20 18 16 14 12 at 1440, halves at mobile */
+  --t-12: clamp(0.75rem, 0.73rem + 0.08vw, 0.75rem);
+  --t-14: clamp(0.8125rem, 0.79rem + 0.12vw, 0.875rem);
+  --t-16: clamp(0.9375rem, 0.9rem + 0.18vw, 1rem);
+  --t-18: clamp(1.0625rem, 1rem + 0.28vw, 1.125rem);
+  --t-20: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);
+  --t-24: clamp(1.25rem, 1.12rem + 0.6vw, 1.5rem);
+  --t-30: clamp(1.5rem, 1.28rem + 1vw, 1.875rem);
+  --t-36: clamp(1.75rem, 1.42rem + 1.5vw, 2.25rem);
+  --t-48: clamp(2.125rem, 1.6rem + 2.4vw, 3rem);
+  --t-60: clamp(2.5rem, 1.7rem + 3.6vw, 3.75rem);
+  --t-72: clamp(2.75rem, 1.6rem + 5vw, 4.5rem);
+  --t-96: clamp(3rem, 1.4rem + 7.2vw, 6rem);
+
+  --leading-tight: 1.02;
+  --leading-snug: 1.15;
+  --leading-body: 1.6;
+  --tracking-tight: -0.035em;
+  --tracking-label: 0.09em;
+
+  /* --- spacing: 4 8 12 16 24 32 40 48 64 80 96 128 --- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+  --s-32: 128px;
+
+  --section-y: clamp(64px, 7vw, 112px);
+  --gutter: clamp(20px, 4vw, 32px);
+  --max: 1240px;
+  --max-prose: 62ch;
+
+  /* --- radii by role: outer 12, inner 8, pills --- */
+  --r-outer: 12px;
+  --r-inner: 8px;
+  --r-pill: 999px;
+
+  /* --- motion: mechanical, weighted; no bounce, no spring --- */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 200ms;
+  --dur: 450ms;
+  --dur-slow: 700ms;
+
+  /* --- depth: shadows only on floating layers, soft and warm --- */
+  --shadow-float: 0 24px 60px -24px rgba(0, 0, 0, 0.75), 0 2px 0 0 rgba(255, 255, 255, 0.04) inset;
+  --shadow-panel: 0 30px 80px -40px rgba(0, 0, 0, 0.9), 1px 1px 0 0 rgba(255, 255, 255, 0.045) inset;
+}

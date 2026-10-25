@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy — Sonde</title>
+  <meta name="description" content="What Sonde collects, what it never touches, and how long a query log is kept." />
+  <meta name="theme-color" content="#131209" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <style>
+    :root { --ground:#131209; --ink:#f2f0ec; --ink-2:#a8a49b; --ink-3:#8b8779; --accent:#ffb020; --line:#313131; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--ground); color:var(--ink); font:400 16px/1.65 "Geist Variable","Helvetica Neue",Arial,sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 96px 24px 128px; }
+    a { color: var(--accent); text-decoration: none; }
+    h1 { font-size: 44px; letter-spacing: -0.04em; line-height: 1.05; margin: 24px 0 8px; font-weight: 500; }
+    h2 { font-size: 20px; letter-spacing: -0.02em; margin: 40px 0 8px; font-weight: 500; }
+    p, li { color: var(--ink-2); }
+    .back { font-family: ui-monospace, monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); }
+    .meta { font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink-3); }
+    hr { border: 0; border-top: 1px solid var(--line); margin: 40px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="back" href="/">← Sonde</a>
+    <h1>Privacy</h1>
+    <p class="meta">Last updated 12 September 2026</p>
+    <p>Sonde is a fictional product built as a design study, and this page exists to show how the real thing would read. It describes the data handling of a database agent that runs inside an operator's own network.</p>
+    <h2>What we collect</h2>
+    <p>A work email when you book a walkthrough, and the pages you visit on this site. No advertising identifiers, no third party analytics scripts.</p>
+    <h2>What the agent touches</h2>
+    <p>Schema names, table and column metadata, the question you ask, the SQL the agent writes, and the row counts returned. Row data stays in your network unless you switch on row context for a specific run.</p>
+    <h2>Retention</h2>
+    <p>Query logs are kept for 90 days by default and can be exported at any point. Walkthrough requests are deleted after 12 months.</p>
+    <hr />
+    <p class="meta">Questions: field@sonde.energy</p>
+  </main>
+</body>
+</html>
