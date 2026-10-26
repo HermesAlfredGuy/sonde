@@ -1,36 +1,36 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Privacy — Sonde</title>
-<meta name="description" content="What Sonde reads, what it keeps, and how long a run log lives." />
-<meta name="theme-color" content="#131209" />
-<link rel="icon" href="favicon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="styles.css" />
-<style>
-  .doc { padding: var(--s-900) 0; max-width: 720px; }
-  .doc h1 { margin-top: var(--s-200); font-size: 36px; line-height: 40px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
-  .doc h2 { margin-top: var(--s-600); font-size: 20px; line-height: 28px; font-weight: 600; color: var(--ink); }
-  .doc p { margin-top: var(--s-100); }
-  .doc .back { display: inline-flex; min-height: 44px; align-items: center; }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — Sonde (concept study)</title>
+<meta name="description" content="This page collects nothing. No cookies, no analytics, no forms, no accounts.">
+<meta name="theme-color" content="#060f14">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<main class="wrap doc">
-  <a class="back label" href="./">← Sonde</a>
+<a class="skip" href="#doc">Skip to content</a>
+<main class="doc" id="doc">
+  <a class="doc-back mono" href="./#top">← Sonde</a>
   <h1>Privacy</h1>
-  <p class="label">Last updated 12 September 2026</p>
-  <p>Sonde is a concept build. This page shows how a real pilot would handle data, written the way the product behaves.</p>
-  <h2>What the agent reads</h2>
-  <p>Schema, table and column names, column types and row counts from a replica. Row data stays in your network unless you switch row context on for a single run, and the run log records when you did.</p>
-  <h2>What we keep</h2>
-  <p>The question, the SQL, the tables it read, the row count, the elapsed time and the approver name. Run logs are kept 90 days and can be exported as SQL or CSV at any point.</p>
-  <h2>What we never do</h2>
-  <p>No training on your queries, no shared model endpoint outside the one you approve, no advertising identifiers, no third party analytics on this site.</p>
-  <h2>Deletion</h2>
-  <p>Ask and we delete the run log and any pilot notes inside 30 days. The audit trail you exported stays yours.</p>
-  <p class="label">hello@sonde.energy</p>
+  <p class="doc-meta mono">Last updated 26 October 2026 · concept study</p>
+
+  <p class="doc-lede">This page collects nothing. There is no account, no form, no cookie, no analytics script and no third-party request of any kind.</p>
+
+  <h2>What is measured</h2>
+  <p>Nothing. The demo, the animations and the artwork all run inside your browser. The three wells, the SQL and every number are invented on the device; no request leaves the page except the files that make it up, all served from this site.</p>
+
+  <h2>What a real product would keep</h2>
+  <p>For the record, because the page argues about provenance: a run log would hold the question, the generated SQL, the tables read, the row count, the elapsed time and the name of the approver. It would be exportable and deletable, and the design keeps row data out of the agent unless a named person switches it on for one run.</p>
+
+  <h2>Hosting</h2>
+  <p>This site is static files on GitHub Pages. GitHub records standard request logs, including IP addresses, as any web host does. There is no tracking on top of that, and no advertising identifier.</p>
+
+  <h2>Fonts and images</h2>
+  <p>Geist is self-hosted from this site under the SIL Open Font License. The rock texture composited into the artwork is by Poly Haven, CC0, also self-hosted. No font or image CDN is contacted.</p>
+
+  <p class="doc-foot"><a href="./#real">What is real on this page →</a></p>
 </main>
 </body>
 </html>

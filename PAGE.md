@@ -1,79 +1,70 @@
-# Sonde — page plan
+# Sonde — page plan (Elaya `landing-page-design` order)
 
-Written before code, in the order the `landing-page-design` skill requires.
+One offer, one audience, one action: a concept study of a database agent for oil and gas,
+aimed at production and data engineers who cannot get answers out of their own historian, and
+whose one action here is **run the demo question** on this page.
 
-## 1. Page outline
+## 1. Page outline (layout A, hero plus sections, chosen because the product is legible from one
+scene, and the artwork carries the identity)
 
-Layout **A, classic hero plus sections** — the product is legible from one hero window (question,
-SQL, rows, approver), so a long form story would slow the first judgement. Sections, in build order:
-
-1. Fluid island nav (glass pill, morphing hamburger, full screen overlay)
-2. Hero: headline, subheadline, one primary CTA, proof line, product window
-3. Tagline reveal — two lines, words activate one at a time
-4. Problem to solution
-5. Benefits, four, outcome first
-6. How it works, three steps
-7. Proof: case note, three numbers, one quote
-8. Approval and security (objection: can an agent touch production data)
-9. Pilot offer (risk reversal)
-10. FAQ, eight questions
-11. Final CTA, identical to the hero
-12. Footer with legal links
+1. Island nav: glass pill, CONCEPT chip, hamburger that morphs into an X and opens a full screen overlay
+2. Hero: the cross-section plate, headline, subhead, primary CTA, one spec line
+3. Spec strip: three design-intent facts, no invented metrics
+4. Descent (how it works, pinned): Read the rock → Ask in plain English → Stop at a name
+5. Tagline reveal: three lines of words that activate one at a time
+6. Run panel (the demo, interactive and labelled SIMULATED)
+7. Benefits: four outcomes on a 7/5 asymmetric grid
+8. What is real here: honest real/simulated table
+9. FAQ, eight questions, native disclosure elements
+10. Final CTA, the same action as the hero
+11. Footer: legal links, provenance note
 
 ## 2. Hero copy
 
-- **Headline:** Ask your wells a question. Get the query that answered it.
-- **Subheadline:** Sonde reads your historian, SCADA tags and well schemas, writes the SQL itself, and
-  stops at a named approver before a row changes. Six week pilot on one asset, no procurement.
-- **CTA:** Book a walkthrough
-- **Proof line:** 3 assets in the Permian and the Montney. Median 41 seconds from question to rows.
+- **Headline:** Ask the field / a question.
+- **Subheadline:** Sonde maps your historian, SCADA tags and well schemas, writes the SQL, and stops
+  at a named approver before a single row changes.
+- **Primary CTA:** Run the demo question
+- **Secondary:** What is real here
+- **Proof line:** Concept study · demo data is synthetic · no live database is connected
 
 ## 3. Benefits
 
-1. **Minutes, not sprints** — median 41 seconds from question to rows against a 9.7M row replica.
-2. **Every number traces back** — each answer keeps the SQL, the tables it read and the row count.
-3. **Writes stop at a person** — 100% of writes wait for a named approver. 0 have shipped without one.
-4. **Built on the schema you have** — historian, SCADA tags, allocations and decline models as they are.
+1. **Every answer arrives with its receipts** — the SQL, the tables it read, the row count, the runtime.
+2. **Writes stop at a person** — the agent cannot approve itself; the gate keeps the statement and the rollback.
+3. **Your schema, not a migration** — historian, SCADA tags, allocations and decline models stay where they are.
+4. **A cost ceiling before the read** — dry runs under a limit, on a replica, never on the primary.
 
 ## 4. How it works
 
-1. **Point it at a replica** — Sonde reads schema and column types, never rows, unless you switch row
-   context on for a single run.
-2. **Ask the question you would ask a colleague** — Sonde plans the query, writes it, dry runs it under
-   a cost ceiling and reads 9.7M rows without touching the primary.
-3. **Approve the write, keep the trail** — the change waits at the gate. Approving it stores the
-   statement, the rollback and the name.
+1. **Read the rock** — schema, column types and counts; not rows.
+2. **Ask in plain English** — plan, dry run under the ceiling, read the replica.
+3. **Stop at a name** — the write waits at the gate with its rollback attached.
 
 ## 5. FAQ
 
-1. **Does Sonde read row data?** No. It reads schema, column types and counts. Row context is opt in per run.
-2. **Which databases does it connect to?** Postgres, SQL Server, Oracle, Snowflake and Timescale, over a replica.
-3. **Can it change production data?** Only through the gate, one approved statement at a time.
-4. **Who approves a write?** A named person in your organisation with the approver role. Sonde cannot approve for them.
-5. **How long does setup take?** Replica credentials and a schema read, usually inside one day.
-6. **Where does the SQL go?** Into the run log, kept 90 days, exportable as SQL or CSV.
-7. **Does it run on our own servers?** Yes, inside your VPC or on hardware you own.
-8. **What does the pilot cost?** Nothing for six weeks. After that it is priced per asset, not per seat.
+1. **Is Sonde a real product?** No. This is a concept study: an art-directed argument for how a
+   production data agent should behave. There is no backend here and nothing is for sale.
+2. **Is the demo real?** The interaction is real; the answers are scripted from a synthetic dataset
+   of three fictional wells. Every panel on this page is labelled.
+3. **Does it read row data?** In the concept, only schema, column types and counts, unless row
+   context is switched on for a single run by a named person.
+4. **Which systems?** Postgres, SQL Server, Oracle, Snowflake and Timescale, read from a replica.
+5. **Can it change production data?** Only one approved statement at a time, through the gate.
+6. **Who approves?** A named person with the approver role. The agent cannot approve for them.
+7. **Where does the SQL go?** Into the run log, exportable as SQL or CSV.
+8. **What does it cost?** Nothing. Nothing is being sold.
 
-## 6. SEO and AEO
+## 6. SEO / AEO
 
-Evergreen offer with search intent, so **index** it. Title: `Sonde — the database agent for oil and gas`.
-Meta description: the subheadline, trimmed. FAQ written as plain question and answer with FAQPage
-schema. Canonical and `og:image` point at the live GitHub Pages URL.
+Indexable (evergreen concept page, and the FAQ is the search-intent surface).
+Title: `Sonde — a database agent for oil and gas (concept study)`
+Description: `A concept study of a database agent for oil and gas: reads schema and well data, writes
+the SQL, stops at a named approver before a row changes. Demo data is synthetic.`
+FAQPage structured data for the eight questions. `og:image` rendered from the hero plate.
 
-## 7. Visual system decisions (skill Part B)
+## 7. Layout recommendation
 
-- Geist for text, Geist Mono only for SQL and data rows.
-- Type sizes only from the scale: 12, 14, 16, 18, 20, 24, 30, 36, 48, 60.
-- Spacing only from the table: 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96.
-- Radii from the set, with the nested formula (outer 16 with an 8px gap gives inner 8).
-- Backgrounds flat: `#131209` page, `#181818` panel, `#1F1F1F` raised, borders `#313131` all round.
-- One gradient, on the hero heading only: `#FFFFFF` to `#9B9B9B`.
-- Monochrome throughout. No accent colour competing with the product window.
-- Reveals: `translateY(64px) blur(12px)` to zero over 800ms on `cubic-bezier(0.32,0.72,0,1)`,
-  driven by IntersectionObserver, never a scroll listener.
-- Signature moment: the product window runs one investigation, then the human gate turns to approved.
-- Three things to avoid: a full width sticky bar instead of the floating pill, a second accent colour,
-  and cards built from one sided borders.
-- Differs from Lathe (warm orange, editorial serif contrast) and from the first Sonde build (amber
-  instrument) by going fully monochrome and product first.
+A. Classic hero plus sections. The hero scene explains the product's posture (read down, gate on the
+way up) in one look, so a long form argument would delay the first judgement. The pinned descent
+gives the story its length without turning the page into a document.
