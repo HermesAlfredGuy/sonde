@@ -1,0 +1,97 @@
+{
+  "project": "sonde-studio-20261026",
+  "state": "complete",
+  "completed_at": "2026-10-26T16:55:00Z",
+  "live_url": "https://hermesalfredguy.github.io/sonde/",
+  "repo": "https://github.com/HermesAlfredGuy/sonde",
+  "deployed_branches": ["main", "gh-pages"],
+  "deploy_method": "force-free normal pushes to the existing Sonde repo; Pages (legacy build from gh-pages) rebuilt and verified by matching sha256 of the served index.html against the local file",
+  "live_index_sha256_16": "56ff2d05910bd733",
+
+  "direction": {
+    "concept": "The page is a well. One continuous geological cross-section of the Delaware Basin at night; scrolling descends through it, and the product argument is the rock you pass on the way down.",
+    "personality": ["instrumental", "geological", "unhurried"],
+    "anti_reference": "The rejected Sonde baseline (dark IDE mockup, grey text panels, no place or material) and the generic 'AI database agent' page with a chat box on a gradient.",
+    "signature_moment": "The pinned descent: the section itself moves past a fixed depth-of-tool readout, and the wellbore visibly ends at total depth 12,800 ft with a shoe and a dashed TD line.",
+    "type": "Geist (variable) for everything; Geist Mono for depth, annotations, labels and the run panel. Display 96px / -0.038em tracking / 0.94 leading; body 18px.",
+    "palette": {
+      "ground": "#060F14", "deep": "#0A1922", "petrol": "#123039",
+      "bone": "#EFE9DC", "muted": "#8FA3A3", "signal": "#F0A03C",
+      "usage": "one accent; amber reserved for the gate, the live depth, and the reservoir. No gradients on UI surfaces."
+    },
+    "motion": "GSAP timeline for the plate reveal (bands settle, casing draws down, lateral and perforations light, annotations in), ScrollTrigger scrub for the descent, tagline word-activation, scripted typing in the demo. Full motion on every device by owner policy, no reduced-motion branch, no toggle.",
+    "references": [
+      "docs/reference/ref.mp4 + frames (owner-supplied reference video, extracted at 0.5 fps) for the strata palette and the low, wide horizon",
+      "Poly Haven cliff_side and dark_rock_02 (CC0) as photographic material for the beds",
+      "Real well-log conventions: formation tops on the well track, depth ruler, total depth and shoe, dashed TD line"
+    ]
+  },
+
+  "artwork": {
+    "kind": "original SVG, generated deterministically in the browser at load (mulberry32 PRNG, fixed seeds)",
+    "source": "site/src/geology.js",
+    "plate": "1600x1000 hero cross-section: 13 formations, two faults with drag folding, wellbore, lateral, 15 perforations, reservoir lens, 150 attitude ticks, ruler, annotations",
+    "section": "1400x3000 descent cross-section on a shared 0-14,000 ft scale, with total depth at 12,800 ft",
+    "texture": "site/assets/img/tex-cliff.webp + tex-dark.webp, converted from Poly Haven 2k diffuse maps, composited at three scales (1560/620/280 px) plus a procedural speckle",
+    "not": "no AI image generation, no stock photo of a well, no 3D render, no traced reference"
+  },
+
+  "paths": {
+    "project": "/opt/data/projects/sonde-studio-20261026",
+    "design": "DESIGN.md",
+    "page_plan": "PAGE.md",
+    "source": "site/",
+    "artwork_source": "site/src/geology.js",
+    "page_behaviour": "site/src/app.js",
+    "styles": "site/styles.css",
+    "video": "/opt/data/projects/sonde-studio-20261026/docs/sonde-scroll-live.mp4",
+    "screenshots": [
+      "/opt/data/projects/sonde-studio-20261026/docs/shot-hero-desktop.png",
+      "/opt/data/projects/sonde-studio-20261026/docs/shot-hero-phone.png",
+      "/opt/data/projects/sonde-studio-20261026/docs/shot-descent.png",
+      "/opt/data/projects/sonde-studio-20261026/docs/shot-demo.png"
+    ],
+    "qa": ["docs/qa1", "docs/qa2", "docs/qa3"],
+    "reference": "docs/reference/"
+  },
+
+  "provenance": {
+    "font": "Geist + Geist Mono, SIL Open Font License 1.1, self-hosted woff2",
+    "texture": "Poly Haven cliff_side / dark_rock_02, CC0, self-hosted and credited in the footer and privacy page",
+    "code": "authored for this project; GSAP 3 + ScrollTrigger vendored locally (standard licence, free for this use)",
+    "copy": "written for this page; every figure is invented and labelled"
+  },
+
+  "checks": [
+    {"what": "live page identity", "how": "curl the live URL and compare sha256 of the served index.html with the local file", "result": "match (56ff2d05910bd733)"},
+    {"what": "console + network", "how": "Playwright on the live URL, desktop and phone", "result": "0 page errors, 0 failed requests, 0 console errors"},
+    {"what": "layout overflow", "how": "studio-qa web pass", "result": "no horizontal overflow at 1440 and 390; 0 mobile tap targets under 44px after fixes"},
+    {"what": "typography defects", "how": "studio-qa clipped-glyph and line-clash checks", "result": "0 clipped glyphs (the 96px headline descender was fixed), 0 line clashes"},
+    {"what": "accessibility", "how": "axe-core 4.10 WCAG AA serious+critical", "result": "0 violations after fixing the dim tagline contrast and making the SQL block focusable"},
+    {"what": "interaction", "how": "Playwright: run preset 1, wait for gate, click Approve, switch to preset 3, open and close the mobile menu with Escape", "result": "gate reaches 'approved by you · demo only', read-only presets never show the approve button, menu toggles aria-expanded and returns focus"},
+    {"what": "visual review", "how": "vision_analyze on the real captures (hero, descent start/mid/end, demo, benefits, disclosure, FAQ, phone hero, phone menu)", "result": "shippable; the fixes it named are in the build (label contrast, depth-marker ambiguity, mobile disclaimer line, ghost button weight)"},
+    {"what": "performance", "how": "studio-qa frame sampling", "result": "61 fps, worst frame 17 ms on software GL in this container — not a prediction of real-device performance"},
+    {"what": "motion recording", "how": "Playwright video of the live page, encoded to H.264", "result": "38 s, 1280x800, 3.4 MB, sequence verified frame by frame"}
+  ],
+
+  "limitations": [
+    "Nothing on the page is a live product: the demo is scripted from three invented wells and the page says so in the nav, in the panel, in the disclosure section and in the FAQ.",
+    "Formation depths and geometry are illustrative, not a real Delaware Basin log; the labels are consistent with the page's own scale, not with a survey.",
+    "The SQL is written to be read (valid Postgres shapes) but has never run against a real schema.",
+    "FPS numbers come from software GL in this container and do not certify phone performance.",
+    "No reduced-motion branch by owner policy; the tagline's resting state is 45% opacity, which passes 3:1 for large text but is intentionally recessive.",
+    "The 'Read the repository' link points at the Sonde repo, which now contains this site rather than a product."
+  ],
+
+  "delivery": {
+    "telegram_topic": 6221,
+    "summary_topic": 15248,
+    "media": [
+      "docs/sonde-scroll-live.mp4",
+      "docs/shot-hero-desktop.png",
+      "docs/shot-hero-phone.png",
+      "docs/shot-descent.png",
+      "docs/shot-demo.png"
+    ]
+  }
+}
