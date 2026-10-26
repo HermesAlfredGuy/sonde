@@ -1,381 +1,299 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sonde — the database agent for oil and gas</title>
-<meta name="description" content="Sonde reads your historian, SCADA tags and well schemas, writes the SQL itself, and stops at a named approver before a row changes." />
-<link rel="canonical" href="https://hermesalfredguy.github.io/sonde/" />
-<meta name="theme-color" content="#131209" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Sonde — the database agent for oil and gas" />
-<meta property="og:description" content="Ask your wells a question. Get the query that answered it." />
-<meta property="og:url" content="https://hermesalfredguy.github.io/sonde/" />
-<meta property="og:image" content="https://hermesalfredguy.github.io/sonde/og.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://hermesalfredguy.github.io/sonde/og.png" />
-<link rel="icon" href="favicon.svg" type="image/svg+xml" />
-<link rel="preload" href="assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="assets/fonts/geist-mono-400.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sonde — a database agent for oil and gas (concept study)</title>
+<meta name="description" content="A concept study of a database agent for oil and gas: it reads the historian, SCADA tags and well schemas, writes the SQL, and stops at a named approver before a row changes. Demo data is synthetic.">
+<link rel="canonical" href="https://hermesalfredguy.github.io/sonde/">
+<meta name="theme-color" content="#060f14">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sonde — ask the field a question">
+<meta property="og:description" content="A concept study of a database agent for oil and gas. Reads schema, writes the query, stops at a named approver. Demo data is synthetic.">
+<meta property="og:url" content="https://hermesalfredguy.github.io/sonde/">
+<meta property="og:image" content="https://hermesalfredguy.github.io/sonde/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<noscript><style>.rv{opacity:1!important;transform:none!important;filter:none!important}.chapter[data-chapter="1"],.chapter[data-chapter="2"]{display:none}</style></noscript>
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {"@type":"Question","name":"Does Sonde read row data?","acceptedAnswer":{"@type":"Answer","text":"No. It reads schema, column types and counts. Row context is opt in for a single run."}},
-    {"@type":"Question","name":"Which databases does it connect to?","acceptedAnswer":{"@type":"Answer","text":"Postgres, SQL Server, Oracle, Snowflake and Timescale, connected to a replica."}},
-    {"@type":"Question","name":"Can it change production data?","acceptedAnswer":{"@type":"Answer","text":"Only through the gate, one approved statement at a time."}},
-    {"@type":"Question","name":"Who approves a write?","acceptedAnswer":{"@type":"Answer","text":"A named person in your organisation with the approver role. Sonde cannot approve for them."}},
-    {"@type":"Question","name":"How long does setup take?","acceptedAnswer":{"@type":"Answer","text":"Replica credentials and a schema read, usually inside one day."}},
-    {"@type":"Question","name":"Where does the SQL go?","acceptedAnswer":{"@type":"Answer","text":"Into the run log, kept 90 days, exportable as SQL or CSV."}},
-    {"@type":"Question","name":"Does it run on our own servers?","acceptedAnswer":{"@type":"Answer","text":"Yes, inside your VPC or on hardware you own."}},
-    {"@type":"Question","name":"What does the pilot cost?","acceptedAnswer":{"@type":"Answer","text":"Nothing for six weeks. After that it is priced per asset, not per seat."}}
-  ]
-}
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is Sonde a real product?","acceptedAnswer":{"@type":"Answer","text":"No. This is a concept study: an art-directed argument for how a production data agent should behave. There is no backend here and nothing is for sale."}},
+{"@type":"Question","name":"Is the demo real?","acceptedAnswer":{"@type":"Answer","text":"The interaction is real; the answers are scripted from a synthetic dataset of three fictional wells. Every panel on this page is labelled."}},
+{"@type":"Question","name":"Does it read row data?","acceptedAnswer":{"@type":"Answer","text":"In the concept, only schema, column types and counts, unless row context is switched on for a single run by a named person."}},
+{"@type":"Question","name":"Which systems?","acceptedAnswer":{"@type":"Answer","text":"Postgres, SQL Server, Oracle, Snowflake and Timescale, read from a replica."}},
+{"@type":"Question","name":"Can it change production data?","acceptedAnswer":{"@type":"Answer","text":"Only one approved statement at a time, through the gate."}},
+{"@type":"Question","name":"Who approves?","acceptedAnswer":{"@type":"Answer","text":"A named person with the approver role. The agent cannot approve for them."}},
+{"@type":"Question","name":"Where does the SQL go?","acceptedAnswer":{"@type":"Answer","text":"Into the run log, exportable as SQL or CSV."}},
+{"@type":"Question","name":"What does it cost?","acceptedAnswer":{"@type":"Answer","text":"Nothing. Nothing is being sold."}}]}
 </script>
 </head>
-<body id="top">
+<body>
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="nav-wrap">
-  <nav class="pill" id="nav" aria-label="Primary">
-    <a class="brand" href="#top" aria-current="page">
-      <svg class="brand__mark" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" d="M128 24a104 104 0 1 0 104 104A104.1 104.1 0 0 0 128 24Zm0 184a80 80 0 1 1 80-80 80.1 80.1 0 0 1-80 80Zm0-128a48 48 0 1 0 48 48 48.1 48.1 0 0 0-48-48Zm0 72a24 24 0 1 1 24-24 24 24 0 0 1-24 24Z"/></svg>
+<header class="nav">
+  <div class="nav-pill">
+    <a class="brand" href="#top" aria-label="Sonde, back to top">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <circle cx="12" cy="6" r="3.1" stroke="currentColor" stroke-width="1.2"/>
+        <path class="brand-mark-line" d="M12 9.2V21" stroke-width="1.2"/>
+        <path d="M7 16.5h10M8.5 19h7" stroke="currentColor" stroke-width="1.2" opacity=".5"/>
+      </svg>
       Sonde
     </a>
-    <ul class="pill__links">
-      <li><a href="#product">Product</a></li>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#security">Security</a></li>
-      <li><a href="#faq">FAQ</a></li>
-    </ul>
-    <a class="btn btn--nav" href="#pilot">Book a walkthrough</a>
-    <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
-      <span class="burger__line"></span>
-      <span class="burger__line"></span>
-      <span class="burger__line"></span>
-    </button>
-  </nav>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#descent">The descent</a>
+      <a href="#demo">Demo</a>
+      <a href="#real">What is real</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <span class="chip"><i></i>Concept</span>
+    <a class="btn btn-primary" href="#demo">Run the demo</a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="overlay" aria-label="Open menu"><span></span><span></span></button>
+  </div>
 </header>
 
-<div class="overlay" id="menu" aria-hidden="true" inert>
-  <nav class="overlay__inner" aria-label="Menu">
-    <ul class="overlay__links">
-      <li><a href="#product">Product</a></li>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#security">Security</a></li>
-      <li><a href="#pilot">Pilot</a></li>
-      <li><a href="#faq">FAQ</a></li>
-    </ul>
-    <a class="btn btn--primary overlay__cta" href="#pilot">Book a walkthrough</a>
-  </nav>
+<div class="overlay" id="overlay" data-open="false" hidden>
+  <a href="#descent">The descent</a>
+  <a href="#demo">Demo</a>
+  <a href="#real">What is real</a>
+  <a href="#faq">FAQ</a>
+  <p class="mono">Concept study · no live database</p>
 </div>
 
 <main id="main">
-
-  <section class="hero" aria-labelledby="hero-h">
-    <div class="wrap hero__grid">
-      <div class="hero__copy">
-        <p class="label reveal">Database agent for oil and gas</p>
-        <h1 class="hero__h" id="hero-h">
-          <span class="line"><span>Ask your wells</span></span>
-          <span class="line"><span>a question.</span></span>
-          <span class="line"><span>Get the query</span></span>
-          <span class="line"><span>that answered it.</span></span>
+  <section class="hero" id="top">
+    <div class="plate" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="chip"><i></i>Concept study · oil &amp; gas data</span>
+        <h1>
+          <span class="ln"><span>Ask the field</span></span>
+          <span class="ln"><span>a question.</span></span>
         </h1>
-        <p class="lede reveal">Sonde reads your historian, SCADA tags and well schemas, writes the SQL itself, and stops at a named approver before a row changes. A pilot runs six weeks on one asset with no procurement.</p>
-        <p class="hero__cta reveal"><a class="btn btn--primary" href="#pilot">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></a></p>
-        <dl class="hero__facts reveal">
-          <div><dt>Assets live</dt><dd>3</dd></div>
-          <div><dt>Median answer</dt><dd>41 s</dd></div>
-          <div><dt>Ungated writes</dt><dd>0</dd></div>
-        </dl>
-        <p class="proof reveal">Permian, Montney and the Gulf Coast. Replica read only until a named approver signs.</p>
-      </div>
-
-      <figure class="window reveal" id="product" aria-labelledby="window-cap">
-        <div class="window__bar">
-          <span class="mono window__id">run 0x41c</span>
-          <span class="window__asset">Sabine Ridge</span>
-          <span class="mono window__clock" data-clock>00.0 s</span>
+        <p class="lede">Sonde maps your historian, SCADA tags and well schemas, writes the SQL itself, and stops at a named approver before a single row changes.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#demo">Run the demo question
+            <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6h8M6.5 2.5 10 6l-3.5 3.5" stroke="currentColor" stroke-width="1.3"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#real">What is real here</a>
         </div>
-        <div class="window__body">
-          <p class="window__q" data-q></p>
-          <pre class="window__sql mono" data-sql tabindex="0" role="region" aria-label="SQL for this run"><code></code></pre>
-          <table class="rows">
-            <caption class="visually-hidden">Wells above 45 percent water cut, with allocation delta</caption>
-            <thead>
-              <tr><th scope="col">well</th><th scope="col">water cut</th><th scope="col">delta bbl</th></tr>
-            </thead>
-            <tbody data-rows></tbody>
-          </table>
-          <div class="gate" data-gate="waiting">
-            <span class="icon icon--lock gate__icon" aria-hidden="true"></span>
-            <p class="gate__text" data-gate-text>Proposed write: allocations for 14 Aug on 3 wells · dry run pass.</p>
-            <span class="chip" data-gate-chip>awaiting approver</span>
+        <p class="micro"><span>Concept study · demo data is synthetic</span><span>No live database is connected</span></p>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <dl class="spec"><dt>Model</dt><dd>Replica read only</dd></dl>
+      <dl class="spec"><dt>Writes</dt><dd>Named approver only</dd></dl>
+      <dl class="spec"><dt>Demo dataset</dt><dd>3 wells, synthetic</dd></dl>
+      <p class="scroll-cue"><i></i>Scroll to descend</p>
+    </div>
+  </section>
+
+  <section class="descent" id="descent" aria-labelledby="descent-title">
+    <div class="descent-track">
+      <div class="descent-stage">
+        <div class="section-host" aria-hidden="true"></div>
+        <div class="depth-cursor" aria-hidden="true"></div>
+        <div class="descent-hud" aria-hidden="true">
+          <div class="depth-read"><span id="depth">0</span> ft<small>depth of tool</small></div>
+        </div>
+        <div class="chapters">
+          <h2 id="descent-title" hidden>How Sonde works, in three depths</h2>
+          <article class="chapter" data-chapter="0">
+            <p class="step">Step 01 · surface to 4,600 ft</p>
+            <h2>Read the rock,<br>not the rows.</h2>
+            <p>Sonde maps the historian, the SCADA tags, the allocation tables and every column type beneath them. It builds a picture of your data before it answers anything.</p>
+            <p class="fact">Scope: <b>schema · types · counts</b></p>
+          </article>
+          <article class="chapter" data-chapter="1">
+            <p class="step">Step 02 · 4,600 to 7,900 ft</p>
+            <h2>Ask it the way<br>you'd ask a colleague.</h2>
+            <p>A question in plain English becomes a query plan, a dry run under a cost ceiling, and rows read from a replica — never from the primary.</p>
+            <p class="fact">Ceiling: <b>set before the read</b></p>
+          </article>
+          <article class="chapter" data-chapter="2">
+            <p class="step">Step 03 · the gate</p>
+            <h2>Stop at a name.</h2>
+            <p>A write never happens on its own. It waits at the gate with the statement, the affected rows and a rollback, until a named person puts their name on it.</p>
+            <p class="fact">Reservoir: <b>Wolfcamp A, 7,900 ft</b> · ungated writes: <b>zero</b></p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tagline" aria-label="Product statement">
+    <p id="tagline">
+      <span class="w">Read</span> <span class="w">the</span> <span class="w">rock.</span>
+      <span class="w">Write</span> <span class="w">the</span> <span class="w">query.</span>
+      <span class="w">Stop</span> <span class="w">at</span> <span class="w sig">a</span> <span class="w sig">name.</span>
+    </p>
+    <p class="note"><b>That is the whole product:</b> a probe, a question, and a person at the end of it.</p>
+  </section>
+
+  <section class="demo" id="demo" aria-labelledby="demo-title">
+    <div class="shell">
+      <div class="shell-head">
+        <div>
+          <p class="eyebrow">Demo · simulated</p>
+          <h2 id="demo-title">Run the demo question.</h2>
+        </div>
+        <p class="lede">Three questions from a synthetic Delaware Basin dataset. The panel is scripted: it acts out one run, labels itself, and never calls a database. Pick one.</p>
+      </div>
+      <div class="run">
+        <div class="asks" role="group" aria-label="Choose a demo question">
+          <button class="ask" data-ask="0" aria-pressed="true"><span class="n">01</span><span>Which Wolfcamp wells are over 45% water cut this quarter, and what do their allocations owe?</span></button>
+          <button class="ask" data-ask="1" aria-pressed="false"><span class="n">02</span><span>Where did we lose the most gas between the separator and the sales meter last month?</span></button>
+          <button class="ask" data-ask="2" aria-pressed="false"><span class="n">03</span><span>Which laterals came within 600 ft of a parent well on the same pad?</span></button>
+          <p class="hint">Wells <b>sab-14h</b>, <b>sab-22h</b> and <b>sab-31h</b> are invented for this page. The query shape is real; the numbers are not.</p>
+        </div>
+        <div class="window" role="region" aria-label="Simulated run panel">
+          <div class="window-bar">
+            <span class="mono">run 0x41c · sabine ridge</span>
+            <span class="sim">Simulated</span>
+          </div>
+          <div class="window-body">
+            <div class="q"><span class="who">Q</span><p id="qtext"><span class="caret"></span></p></div>
+            <pre class="code" id="sql" tabindex="0" aria-label="Generated SQL (demonstration)"><code></code></pre>
+            <table class="rows" id="rows" aria-label="Simulated result rows">
+              <thead><tr><th>well</th><th>water cut</th><th>delta bbl</th></tr></thead>
+              <tbody></tbody>
+            </table>
+            <div class="gate" data-state="idle" id="gate">
+              <span class="dot"></span>
+              <p id="gate-text">Waiting for the query.</p>
+              <button class="btn btn-primary" id="approve" hidden>Approve write</button>
+            </div>
+          </div>
+          <div class="window-foot">
+            <span id="foot">replica read · writes only through the gate</span>
+            <button class="reset" id="reset">Reset</button>
           </div>
         </div>
-        <figcaption class="window__foot mono" id="window-cap">3 rows · delta_bbl desc · replica read · writes only through the gate</figcaption>
-      </figure>
-      <div class="ticker" aria-hidden="true">
-        <div class="ticker__track">
-          <span>sab-14h · wc 61.2% · Δ +412.6 bbl</span><span>sab-22h · wc 52.8% · Δ +98.4 bbl</span><span>sab-31h · wc 47.1% · Δ +12.2 bbl</span><span>run 0x41c · 41.0 s · approved by M. Vega</span><span>replica · 9.7M rows · 0 ungated writes</span>
-          <span>sab-14h · wc 61.2% · Δ +412.6 bbl</span><span>sab-22h · wc 52.8% · Δ +98.4 bbl</span><span>sab-31h · wc 47.1% · Δ +12.2 bbl</span><span>run 0x41c · 41.0 s · approved by M. Vega</span><span>replica · 9.7M rows · 0 ungated writes</span>
-        </div>
       </div>
     </div>
   </section>
 
-  <section class="tagline" aria-label="What changes">
-    <div class="wrap">
-      <p class="tagline__text" data-words>Your data team stops writing the same query twice. Your engineers stop waiting until Thursday for the answer.</p>
-    </div>
-  </section>
-
-  <section class="section" id="problem">
-    <div class="wrap">
-      <h2 class="reveal" data-idx="01">The question is simple. The queue is not.</h2>
-      <div class="two-col">
-        <p class="reveal">A production engineer needs water cut on twelve wells before the morning call. The ticket goes in on Monday. The answer comes back on Thursday, in a spreadsheet, with no SQL attached. Nobody can say which allocation table it came from.</p>
-        <p class="reveal">Sonde answers in the shape the question was asked: the tables it read, the SQL it wrote, three rows, the time it took, and the person who approved the write. Nothing leaves your network.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="benefits" aria-labelledby="benefits-h">
-    <div class="wrap">
-      <h2 class="reveal" data-idx="02" id="benefits-h">What a production engineer gets on Monday</h2>
-      <div class="cards">
-        <article class="card reveal">
-          <p class="card__label mono"><span class="icon icon--clock" aria-hidden="true"></span>Median question to rows</p>
-          <p class="card__metric mono">41<span>s</span></p>
-          <h3>Minutes, not sprints</h3>
-          <p>Against a 9.7M row replica. The morning call stops being the deadline.</p>
-        </article>
-        <article class="card reveal">
-          <p class="card__label mono"><span class="icon icon--database" aria-hidden="true"></span>Lineage</p>
-          <h3>Every number traces back</h3>
-          <p>Each answer keeps the SQL, the tables it read and the row count, so a number can be defended in a review.</p>
-        </article>
-        <article class="card reveal">
-          <p class="card__label mono"><span class="icon icon--stamp" aria-hidden="true"></span>Approval</p>
-          <h3>Writes stop at a person</h3>
-          <p>100% of writes wait for a named approver. 0 have shipped without one, across every pilot asset.</p>
-        </article>
-        <article class="card reveal">
-          <p class="card__label mono"><span class="icon icon--shield" aria-hidden="true"></span>Fit</p>
-          <h3>Built on the schema you have</h3>
-          <p>Historian, SCADA tags, allocations and decline models as they already are. No migration, no new warehouse.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="how" aria-labelledby="how-h">
-    <div class="wrap">
-      <h2 class="reveal" data-idx="03" id="how-h">Three steps, and the first one is a credential</h2>
-      <div class="how__grid">
-      <ol class="steps">
-        <li class="step reveal">
-          <span class="mono step__n">01</span>
-          <div>
-            <h3>Point it at a replica</h3>
-            <p>Sonde reads schema and column types, never rows, unless you switch row context on for a single run.</p>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="mono step__n">02</span>
-          <div>
-            <h3>Ask the question you would ask a colleague</h3>
-            <p>It plans the query, writes the SQL, dry runs it under a cost ceiling and reads 9.7M rows without touching the primary.</p>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="mono step__n">03</span>
-          <div>
-            <h3>Approve the write, keep the trail</h3>
-            <p>The change waits at the gate. Approving it stores the statement, the rollback and the name against the run.</p>
-          </div>
-        </li>
-      </ol>
-      <aside class="ledger reveal" aria-label="Run audit trail">
-        <p class="label">run 0x41c · audit trail</p>
-        <ol class="ledger__rows">
-          <li><span class="mono ledger__t">09:41:02</span><span class="ledger__k">read</span><span class="ledger__v">schema · wells, production_daily, allocations</span></li>
-          <li><span class="mono ledger__t">09:41:09</span><span class="ledger__k">plan</span><span class="ledger__v">1 statement · est $0.42</span></li>
-          <li><span class="mono ledger__t">09:41:19</span><span class="ledger__k">query</span><span class="ledger__v">12 rows · replica · 1.2 s</span></li>
-          <li><span class="mono ledger__t">09:41:41</span><span class="ledger__k">gate</span><span class="ledger__v">pending · M. Vega, production data lead</span></li>
-          <li><span class="mono ledger__t">09:42:05</span><span class="ledger__k">approval</span><span class="ledger__v">approved · M. Vega</span></li>
-          <li><span class="mono ledger__t">09:42:07</span><span class="ledger__k">write</span><span class="ledger__v">allocations · 14 Aug · 3 rows · committed</span></li>
-          <li><span class="mono ledger__t">09:42:08</span><span class="ledger__k">rollback</span><span class="ledger__v">sha256:3f2a91c9… stored</span></li>
-        </ol>
-        <p class="ledger__foot">Immutable log · UTC · exportable as SQL or CSV</p>
-      </aside>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="proof" aria-labelledby="proof-h">
-    <div class="wrap">
-      <h2 class="reveal" id="proof-h" data-idx="04">What it found in the first week</h2>
-      <div class="proof__grid">
-        <figure class="quote reveal">
-          <blockquote>
-            <p>The first answer took 40 seconds. The second one found an allocation error we had carried for two quarters, and the SQL was right there in the log.</p>
-          </blockquote>
-          <figcaption>Marisol Vega, production data lead, Cormorant Energy</figcaption>
-        </figure>
-        <dl class="stats reveal">
-          <div class="stat"><dt>Median answer</dt><dd class="mono">41.0 s</dd></div>
-          <div class="stat"><dt>Wells on replica</dt><dd class="mono">212,600</dd></div>
-          <div class="stat"><dt>Ungated writes</dt><dd class="mono">0</dd></div>
-        </dl>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="security" aria-labelledby="security-h">
-    <div class="wrap sec__grid">
+  <section class="shell" aria-labelledby="bene-title">
+    <div class="shell-head">
       <div>
-        <h2 class="reveal" data-idx="05" id="security-h">Reads on a replica. Writes through a gate.</h2>
-        <p class="reveal">The agent is useful because it can act. It is safe to run because it cannot act alone: every write is a single statement, dry run first, signed off by a person whose name lands in the log.</p>
-        <ul class="checks reveal">
-          <li><span class="icon icon--check" aria-hidden="true"></span>Replica access only. Row data stays put unless you opt in per run.</li>
-          <li><span class="icon icon--check" aria-hidden="true"></span>Approver must be a named person in your organisation. Sonde cannot approve for them.</li>
-          <li><span class="icon icon--check" aria-hidden="true"></span>Every write ships with a rollback statement.</li>
-          <li><span class="icon icon--check" aria-hidden="true"></span>Run log kept 90 days, exportable as SQL or CSV.</li>
-          <li><span class="icon icon--check" aria-hidden="true"></span>Runs inside your VPC or on hardware you own.</li>
-        </ul>
+        <p class="eyebrow">What changes</p>
+        <h2 id="bene-title">Answers you can defend<br>in a meeting.</h2>
       </div>
-      <figure class="log reveal">
-        <figcaption class="label">write log · last three writes</figcaption>
-        <ol class="log__rows">
-          <li>
-            <p class="log__head"><span class="mono log__when">2026-08-14 09:42 UTC</span><span class="log__who">Maya Vega · production data lead</span><span class="chip log__state">applied</span></p>
-            <p class="mono log__sql">update allocations set target_pct = 12.0 where id = 4821;</p>
-            <p class="mono log__meta">1 row · dry run pass · rollback sha256:3f2a91c9…</p>
-          </li>
-          <li>
-            <p class="log__head"><span class="mono log__when">2026-08-12 16:10 UTC</span><span class="log__who">Ravi Osei · completions engineer</span><span class="chip log__state">applied</span></p>
-            <p class="mono log__sql">update well_alloc set rate = 0.85 where well_id = 'W-17';</p>
-            <p class="mono log__meta">2 rows · dry run pass · rollback sha256:8b1c40d4…</p>
-          </li>
-          <li>
-            <p class="log__head"><span class="mono log__when">2026-08-11 08:05 UTC</span><span class="log__who">Dalia Ahmed · production engineer</span><span class="chip log__state">rolled back</span></p>
-            <p class="mono log__sql">update production_daily set bbl = 1240 where day = '2026-08-10';</p>
-            <p class="mono log__meta">1 row · reverted 08:19 UTC by Dalia Ahmed · rollback sha256:5e77b2a1…</p>
-          </li>
-        </ol>
-        <p class="log__note">Nothing here was written without a name against it.</p>
-      </figure>
+      <p class="lede">The point is not that a model can write SQL. It is that the number arrives with its provenance, the write waits for a person, and the schema you already have is enough.</p>
+    </div>
+    <div class="benefits-list">
+      <article class="benefit">
+        <span class="idx">01</span>
+        <div><h3>Every answer arrives with its receipts</h3><p>The SQL, the tables it read, the row count and the runtime stay with the answer, so a number can be checked instead of trusted.</p></div>
+      </article>
+      <article class="benefit">
+        <span class="idx">02</span>
+        <div><h3>Writes stop at a person</h3><p>The agent cannot approve itself. The gate keeps the statement, the affected rows and the rollback, with a name on it.</p></div>
+      </article>
+      <article class="benefit">
+        <span class="idx">03</span>
+        <div><h3>Your schema, not a migration</h3><p>Historian, SCADA tags, allocations and decline models stay where they are. Nothing has to be reshaped before it can be asked anything.</p></div>
+      </article>
+      <article class="benefit">
+        <span class="idx">04</span>
+        <div><h3>A cost ceiling before the read</h3><p>Every question is dry run under a limit you set, on a replica, so a broad question cannot become a production incident.</p></div>
+      </article>
     </div>
   </section>
 
-  <section class="section" id="pilot" aria-labelledby="pilot-h">
-    <div class="wrap">
-      <div class="pilot reveal">
-        <div class="pilot__copy">
-          <h2 data-idx="06" id="pilot-h">Six weeks, one asset, nothing to sign.</h2>
-          <p>Bring one asset and a replica credential. We connect, run your first ten questions with you, and hand back the run log. No card, no procurement, stop at the end of any week.</p>
-          <ul class="checks checks--tight">
-            <li><span class="icon icon--check" aria-hidden="true"></span>No credit card and no security questionnaire to start.</li>
-            <li><span class="icon icon--check" aria-hidden="true"></span>If you stop, the audit trail is yours to keep.</li>
-            <li><span class="icon icon--check" aria-hidden="true"></span>Priced per asset after the pilot, not per seat.</li>
+  <section class="real" id="real" aria-labelledby="real-title">
+    <div class="shell">
+      <div class="shell-head">
+        <div>
+          <p class="eyebrow">Disclosure</p>
+          <h2 id="real-title">What is real<br>on this page.</h2>
+        </div>
+        <p class="lede">Sonde is a concept study, not a company. This page is the argument, and it is worth being exact about which parts of it you can touch.</p>
+      </div>
+      <div class="split">
+        <div class="col real-col">
+          <h3><i></i>Real</h3>
+          <ul>
+            <li><span>The interaction, typing and approval gate</span><span>Works</span></li>
+            <li><span>The artwork, drawn as SVG on load</span><span>Authored</span></li>
+            <li><span>The copy and the argument</span><span>Written</span></li>
+            <li><span>Keyboard, focus and contrast</span><span>Tested</span></li>
           </ul>
         </div>
-        <form class="form" data-form novalidate>
-          <label class="form__label" for="email">Work email</label>
-          <div class="form__row">
-            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@company.com" required aria-describedby="form-msg" />
-            <button class="btn btn--primary" type="submit">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></button>
-          </div>
-          <p class="form__msg" id="form-msg" data-form-msg role="status" aria-live="polite"></p>
-          <p class="form__note">A field engineer replies inside one business day. Central Time.</p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="faq" aria-labelledby="faq-h">
-    <div class="wrap">
-      <h2 class="reveal" data-idx="07" id="faq-h">The ones data teams ask first</h2>
-      <div class="faq" data-faq>
-        <details class="q">
-          <summary><span>Does Sonde read row data?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>No. It reads schema, column types and counts. Row context is opt in for a single run, and the run log says when it was used.</p>
-        </details>
-        <details class="q">
-          <summary><span>Which databases does it connect to?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>Postgres, SQL Server, Oracle, Snowflake and Timescale, connected to a replica rather than the primary.</p>
-        </details>
-        <details class="q">
-          <summary><span>Can it change production data?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>Only through the gate, one approved statement at a time. The statement is dry run first and every write carries its rollback.</p>
-        </details>
-        <details class="q">
-          <summary><span>Who approves a write?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>A named person in your organisation with the approver role. Sonde cannot approve on their behalf, and the gate cannot be switched off.</p>
-        </details>
-        <details class="q">
-          <summary><span>How long does setup take?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>Replica credentials and a schema read, usually inside one day. The first question usually runs the same afternoon.</p>
-        </details>
-        <details class="q">
-          <summary><span>Where does the SQL go?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>Into the run log, kept 90 days, exportable as SQL or CSV. Nothing is used to train a shared model.</p>
-        </details>
-        <details class="q">
-          <summary><span>Does it run on our own servers?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>Yes. Inside your VPC or on hardware you own, with outbound access limited to the model endpoint you approve.</p>
-        </details>
-        <details class="q">
-          <summary><span>What does the pilot cost?</span><span class="icon icon--plus q__sign" aria-hidden="true"></span></summary>
-          <p>Nothing for six weeks. After that it is priced per asset, not per seat, and the price is fixed for the first year.</p>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <section class="section cta" aria-labelledby="cta-h">
-    <div class="wrap cta__grid">
-      <div>
-        <h2 class="reveal" id="cta-h">Ask your wells a question.</h2>
-        <p class="lede reveal">Get the query that answered it, and the name of the person who signed it off.</p>
-        <p class="reveal"><a class="btn btn--primary" href="#pilot">Book a walkthrough<span class="icon icon--arrow" aria-hidden="true"></span></a></p>
-      </div>
-      <figure class="gate-card reveal">
-        <p class="label">run 0x41c · 14 Aug</p>
-        <p class="gate-card__q">Rewrite allocations for 14 Aug on 3 wells.</p>
-        <div class="gate">
-          <span class="icon icon--lock gate__icon" aria-hidden="true"></span>
-          <p class="gate__text">M. Vega · production data lead</p>
-          <span class="chip">awaiting approver</span>
+        <div class="col sim-col">
+          <h3><i></i>Simulated</h3>
+          <ul>
+            <li><span>The three wells and every figure</span><span>Synthetic</span></li>
+            <li><span>The SQL, written to be read</span><span>Scripted</span></li>
+            <li><span>Formation depths and geometry</span><span>Illustrative</span></li>
+            <li><span>The approver — that is you clicking</span><span>Demo</span></li>
+          </ul>
         </div>
-        <p class="gate-card__meta mono">rollback 3f2a91c · statement stored · 3 rows</p>
-      </figure>
+      </div>
     </div>
+  </section>
+
+  <section class="shell" id="faq" aria-labelledby="faq-title">
+    <div class="shell-head">
+      <div>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Before you ask.</h2>
+      </div>
+      <p class="lede">Eight answers, including the ones a concept page usually avoids.</p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item"><summary>Is Sonde a real product?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>No. This is a concept study: an art-directed argument for how a production data agent should behave. There is no backend on this page, nothing is for sale, and there is no company behind it.</p></div></details>
+      <details class="faq-item"><summary>Is the demo real?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>The interaction is real. Click a question and the panel types, writes and closes a gate. The answers are scripted from a synthetic dataset of three fictional wells, and the panel says so on its face.</p></div></details>
+      <details class="faq-item"><summary>Does it read row data?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>In the concept, no: schema, column types and counts only. Row context is opt-in for a single run, switched on by a named person, and it expires with the run.</p></div></details>
+      <details class="faq-item"><summary>Which systems would it connect to?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>Postgres, SQL Server, Oracle, Snowflake and Timescale, always through a replica. The historian and the SCADA tag database stay read-only in the design.</p></div></details>
+      <details class="faq-item"><summary>Can it change production data?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>Only one approved statement at a time, through the gate, with the rollback attached before the approve button exists. Anything wider is out of scope by design.</p></div></details>
+      <details class="faq-item"><summary>Who approves a write?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>A named person with the approver role, inside your organisation. The agent cannot approve for them, and the approval is stored with the statement rather than in a log beside it.</p></div></details>
+      <details class="faq-item"><summary>Where does the SQL go?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>Into a run log with the question, the plan, the row count and the approver. Exportable as SQL or CSV, so an answer can be rebuilt outside the tool.</p></div></details>
+      <details class="faq-item"><summary>What does it cost?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a"><p>Nothing. Nothing is being sold. If you want the argument, it is on this page; if you want the artwork or the code, it is in the repository.</p></div></details>
+    </div>
+  </section>
+
+  <section class="close" aria-labelledby="close-title">
+    <div class="close-inner">
+      <p class="eyebrow">Concept study</p>
+      <h2 id="close-title">Ask the field a question.</h2>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#demo">Run the demo question</a>
+        <a class="btn btn-ghost" href="https://github.com/HermesAlfredGuy/sonde" rel="noopener">Read the repository</a>
+      </div>
+      <p class="micro">No tracking · no backend · synthetic data throughout</p>
+    </div>
+    <div class="close-art" aria-hidden="true"></div>
   </section>
 </main>
 
 <footer class="foot">
-  <div class="wrap foot__inner">
-    <div class="foot__brand">
-      <a class="brand" href="#top" aria-label="Sonde, back to top">
-        <svg class="brand__mark" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" d="M128 24a104 104 0 1 0 104 104A104.1 104.1 0 0 0 128 24Zm0 184a80 80 0 1 1 80-80 80.1 80.1 0 0 1-80 80Zm0-128a48 48 0 1 0 48 48 48.1 48.1 0 0 0-48-48Zm0 72a24 24 0 1 1 24-24 24 24 0 0 1-24 24Z"/></svg>
-        Sonde
-      </a>
-      <p class="foot__note">Production data, answered with a query you can defend.</p>
-    </div>
-    <nav class="foot__links" aria-label="Footer">
+  <div class="foot-inner">
+    <p>© 2026 Sonde — a concept study.</p>
+    <nav class="foot-links" aria-label="Legal">
       <a href="privacy.html">Privacy</a>
       <a href="terms.html">Terms</a>
-      <a href="mailto:hello@sonde.energy">hello@sonde.energy</a>
+      <a href="#top">Back to top</a>
     </nav>
-    <p class="foot__legal mono">© 2026 Sonde. A concept build, not a live product.</p>
+    <p class="prov">Artwork authored as SVG for this page. Rock texture: Poly Haven, <em>cliff_side</em> and <em>dark_rock_02</em>, CC0. Type: Geist, SIL Open Font License.</p>
   </div>
 </footer>
 
-<script src="app.js" type="module"></script>
+<script src="assets/vendor/gsap.min.js" defer></script>
+<script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+<script type="module" src="src/app.js"></script>
 </body>
 </html>
