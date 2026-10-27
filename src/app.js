@@ -2,7 +2,7 @@
    One timeline owner for scroll (GSAP ScrollTrigger); the demo is plain script;
    nothing is fetched. Full motion on every device by owner policy. */
 
-import { buildPlate, buildSection } from './geology.js';
+import { buildPlate, buildSection, formationAt } from './geology.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -34,8 +34,8 @@ if (intro) {
     .from('.ly-surface > *', { y: 10, opacity: 0, duration: 1.1, stagger: 0.05 }, 0.5)
     .from('.band', { y: (i) => 8 + i * 1.6, opacity: 0, duration: 1.1, stagger: 0.045 }, 0.35)
     .from('.ground-rim', { opacity: 0, duration: 1.2 }, 0.6)
-    .from('.casing-line, .casing-dark', { scaleY: 0, transformOrigin: 'top center', duration: 1.1 }, 0.9)
-    .from('.lateral-line, .lateral-dark', { opacity: 0, duration: 0.8 }, 1.5)
+    // the plate arrives under the surface copy rather than popping in at the top
+    .fromTo('.section-plate', { opacity: 0 }, { opacity: 1, duration: 1.4, ease: 'power1.out' }, 0.9)
     .from('.perf, .casing-hot', { opacity: 0, duration: 0.6, stagger: 0.03 }, 1.7)
     .from('.res-glow, .res-ambient', { opacity: 0, scale: 0.7, transformOrigin: 'center', duration: 1.4 }, 1.35)
     .from('.res-body, .res-crest, .res-core', { opacity: 0, duration: 1.1 }, 1.4)
@@ -75,11 +75,19 @@ if (intro) {
 
 /* ——————————————————————————————— the descent ——— */
 const sectionHost = $('.section-host');
-const secSVG = buildSection({ h: 3000 });
-secSVG.classList.add('section-svg');
+/* The deep section ships as a baked 2400 × 6000 plate. Panning eight megapixels of
+   filtered vector re-rasterises the whole drawing every frame; a bitmap composites. */
+const secSVG = document.createElement('img');
+secSVG.className = 'section-plate';
+const phone = matchMedia('(max-width: 743px)').matches;
+secSVG.src = phone ? 'assets/img/section-plate-phone.webp' : 'assets/img/section-plate.webp';
+secSVG.alt = '';
+secSVG.decoding = 'async';
+secSVG.setAttribute('fetchpriority', 'low');
 sectionHost.append(secSVG);
 
 const depthEl = $('#depth');
+const formationEl = $('#formation');
 const chapters = $$('.chapter');
 let travel = 0;
 
@@ -97,30 +105,45 @@ if (gsap) {
 }
 
 if (gsap && ScrollTrigger) {
+  const stageEl = $('.descent-stage');
+  let stageH = stageEl.clientHeight;
+  let svgH = secSVG.getBoundingClientRect().height;
+  // one setter instead of a new gsap.set object every scroll frame
+  const setY = gsap.quickSetter(secSVG, 'y', 'px');
+  const chTween = chapters.map((ch) => ({
+    alpha: gsap.quickTo(ch, 'autoAlpha', { duration: 0.24, overwrite: true }),
+    shift: gsap.quickTo(ch, 'y', { duration: 0.34, ease: 'power2.out', overwrite: true }),
+  }));
+  let lastFt = -1;
+
   const st = ScrollTrigger.create({
     trigger: '.descent-track',
     start: 'top top',
     end: 'bottom bottom',
-    scrub: true,
+    scrub: 0.5,
+    invalidateOnRefresh: true,
+    onRefresh: () => {
+      stageH = stageEl.clientHeight;
+      svgH = secSVG.getBoundingClientRect().height;
+      lastFt = -1;
+    },
     onUpdate: (self) => {
       const p = self.progress;
-      gsap.set(secSVG, { y: -travel * p });
+      setY(-travel * p);
       // depth of the section entering the middle of the stage, from the same mapping the
-      // section's own labels use (14,000 ft over the full drawing height)
-      const stageH = $('.descent-stage').clientHeight;
-      const svgH = secSVG.getBoundingClientRect().height;
-      const ft = Math.round(((p * travel + stageH * 0.55) / svgH) * 14000 / 10) * 10;
-      depthEl.textContent = ft.toLocaleString('en-US');
-      chapters.forEach((ch, i) => {
+      // section's own labels use (12,000 ft over the full drawing height)
+      const ft = Math.round(((p * travel + stageH * 0.55) / svgH) * 12000 / 10) * 10;
+      if (ft !== lastFt) {
+        lastFt = ft;
+        depthEl.textContent = ft.toLocaleString('en-US');
+        if (formationEl) formationEl.textContent = formationAt(ft).name;
+      }
+      for (let i = 0; i < chapters.length; i++) {
         const centre = i === 2 ? 0.86 : 0.2 + i * 0.32;
-        const d = Math.abs(p - centre);
-        const on = i === 2 ? p > 0.66 : d < 0.16;
-        gsap.set(ch, {
-          autoAlpha: on ? 1 : 0,
-          y: on ? 0 : (p < centre ? 22 : -22),
-          duration: 0.2,
-        });
-      });
+        const on = i === 2 ? p > 0.66 : Math.abs(p - centre) < 0.16;
+        chTween[i].alpha(on ? 1 : 0);
+        chTween[i].shift(on ? 0 : (p < centre ? 22 : -22));
+      }
     },
   });
   st.refresh();
@@ -189,7 +212,7 @@ document.addEventListener('keydown', (e) => {
 /* ——————————————————————————————— demo ——— */
 const RUNS = [
   {
-    q: 'Which Wolfcamp wells are over 45% water cut this quarter, and what do their allocations owe?',
+    q: 'Which Arab-D wells are over 45% water cut this quarter, and what do their allocations owe?',
     sql: `with q as (
   select w.name, p.water_bbl, p.oil_bbl,
          sum(a.delta_bbl) as delta_bbl
@@ -197,7 +220,7 @@ const RUNS = [
   join   wells w       on w.id = p.well_id
   join   allocations a on a.well_id = p.well_id
                       and a.month = p.month
-  where  p.formation = 'WOLFCAMP_A'
+  where  p.formation = 'ARAB_D'
     and  p.month >= date_trunc('quarter', now())
   group  by 1, 2, 3
 )
@@ -209,7 +232,7 @@ from   q
 where  water_bbl > 0.45 * (oil_bbl + water_bbl)
 order  by 3
 limit  10;`,
-    rows: [['sab-22h', '61.4%', '−1,284'], ['sab-31h', '53.9%', '−902'], ['sab-14h', '47.2%', '−318']],
+    rows: [['awd-22h', '61.4%', '−1,284'], ['hry-31h', '53.9%', '−902'], ['utm-14h', '47.2%', '−318']],
     gate: 'Write prepared: 3 allocation rows. Dry run clean, 0 rows changed.',
     foot: 'replica read · 3 rows · writes only through the gate',
     done: 'Approved by you · demo only · rollback sha256:3f2a91c9',
@@ -228,7 +251,7 @@ where  s.day >= date_trunc('month', now()) - interval '1 month'
 group  by 1
 order  by 2 desc
 limit  5;`,
-    rows: [['sabine ridge', '4,180', '3.91%'], ['crane north', '1,265', '2.42%'], ['blinebry west', '404', '0.88%']],
+    rows: [['ghawar north', '4,180', '3.91%'], ['khurais east', '1,265', '2.42%'], ['shaybah south', '404', '0.88%']],
     gate: 'Read only. This question changes nothing, so there is nothing to approve.',
     foot: 'replica read · 3 pads · read only, no gate',
     done: 'Read only · no statement to approve',
@@ -244,10 +267,10 @@ join   wells p
        on p.pad_id = c.pad_id
       and p.spud_date < c.spud_date
       and c.id <> p.id
-where  c.formation = 'WOLFCAMP_A'
+where  c.formation = 'ARAB_D'
   and  st_dwithin(c.geom::geography, p.geom::geography, 600)
 order  by 3 asc;`,
-    rows: [['sab-31h', 'sab-14h', '412'], ['sab-22h', 'sab-14h', '587'], ['—', 'no other pair', '—']],
+    rows: [['hry-31h', 'utm-14h', '412'], ['awd-22h', 'utm-14h', '587'], ['—', 'no other pair', '—']],
     gate: 'Read only. A spacing question, answered without touching a row.',
     foot: 'replica read · 2 pairs · read only, no gate',
     done: 'Read only · no statement to approve',

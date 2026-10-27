@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sonde — a database agent for oil and gas (concept study)</title>
-<meta name="description" content="A concept study of a database agent for oil and gas: it reads the historian, SCADA tags and well schemas, writes the SQL, and stops at a named approver before a row changes. Demo data is synthetic.">
+<title>Sonde — a database agent for Saudi oil and gas (concept study)</title>
+<meta name="description" content="A concept study of a database agent for Saudi oil and gas: it reads the historian, SCADA tags and well schemas of an Eastern Province field, writes the SQL, and stops at a named approver before a row changes. Demo data is synthetic.">
 <link rel="canonical" href="https://hermesalfredguy.github.io/sonde/">
 <meta name="theme-color" content="#060f14">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sonde — ask the field a question">
-<meta property="og:description" content="A concept study of a database agent for oil and gas. Reads schema, writes the query, stops at a named approver. Demo data is synthetic.">
+<meta property="og:description" content="A concept study of a database agent for Saudi oil and gas. Reads the schema, writes the query, stops at a named approver. Demo data is synthetic.">
 <meta property="og:url" content="https://hermesalfredguy.github.io/sonde/">
 <meta property="og:image" content="https://hermesalfredguy.github.io/sonde/assets/img/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -99,6 +99,7 @@
         <div class="section-host" aria-hidden="true"></div>
         <div class="depth-cursor" aria-hidden="true"></div>
         <div class="descent-hud" aria-hidden="true">
+          <p class="depth-form" id="formation">Alluvium</p>
           <div class="depth-read"><span id="depth">0</span> ft<small>depth of tool</small></div>
         </div>
         <div class="chapters">
@@ -110,7 +111,7 @@
             <p class="fact">Scope: <b>schema · types · counts</b></p>
           </article>
           <article class="chapter" data-chapter="1">
-            <p class="step">Step 02 · 4,600 to 7,900 ft</p>
+            <p class="step">Step 02 · 4,600 to 7,000 ft</p>
             <h2>Ask it the way<br>you'd ask a colleague.</h2>
             <p>A question in plain English becomes a query plan, a dry run under a cost ceiling, and rows read from a replica — never from the primary.</p>
             <p class="fact">Ceiling: <b>set before the read</b></p>
@@ -119,7 +120,7 @@
             <p class="step">Step 03 · the gate</p>
             <h2>Stop at a name.</h2>
             <p>A write never happens on its own. It waits at the gate with the statement, the affected rows and a rollback, until a named person puts their name on it.</p>
-            <p class="fact">Reservoir: <b>Wolfcamp A, 7,900 ft</b> · ungated writes: <b>zero</b></p>
+            <p class="fact">Reservoir: <b>Arab-D, 7,050 ft</b> · ungated writes: <b>zero</b></p>
           </article>
         </div>
       </div>
@@ -142,18 +143,18 @@
           <p class="eyebrow">Demo · simulated</p>
           <h2 id="demo-title">Run the demo question.</h2>
         </div>
-        <p class="lede">Three questions from a synthetic Delaware Basin dataset. The panel is scripted: it acts out one run, labels itself, and never calls a database. Pick one.</p>
+        <p class="lede">Three questions from a synthetic Eastern Province dataset — Ghawar, Khurais, Shaybah. The panel is scripted: it acts out one run, labels itself, and never calls a database. Pick one.</p>
       </div>
       <div class="run">
         <div class="asks" role="group" aria-label="Choose a demo question">
-          <button class="ask" data-ask="0" aria-pressed="true"><span class="n">01</span><span>Which Wolfcamp wells are over 45% water cut this quarter, and what do their allocations owe?</span></button>
+          <button class="ask" data-ask="0" aria-pressed="true"><span class="n">01</span><span>Which Arab-D wells are over 45% water cut this quarter, and what do their allocations owe?</span></button>
           <button class="ask" data-ask="1" aria-pressed="false"><span class="n">02</span><span>Where did we lose the most gas between the separator and the sales meter last month?</span></button>
           <button class="ask" data-ask="2" aria-pressed="false"><span class="n">03</span><span>Which laterals came within 600 ft of a parent well on the same pad?</span></button>
-          <p class="hint">Wells <b>sab-14h</b>, <b>sab-22h</b> and <b>sab-31h</b> are invented for this page. The query shape is real; the numbers are not.</p>
+          <p class="hint">Wells <b>awd-22h</b>, <b>hry-31h</b> and <b>utm-14h</b> are invented for this page. The query shape is real; the numbers are not.</p>
         </div>
         <div class="window" role="region" aria-label="Simulated run panel">
           <div class="window-bar">
-            <span class="mono">run 0x41c · sabine ridge</span>
+            <span class="mono">run 0x41c · ghawar north</span>
             <span class="sim">Simulated</span>
           </div>
           <div class="window-body">
