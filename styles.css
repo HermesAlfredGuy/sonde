@@ -972,3 +972,28 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .doc-foot { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line-soft); }
 .doc-foot a { color: var(--signal); }
 .doc-foot a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* ——————————————————————————————— live core sample ———
+   A procedural core in the disclosure section: it illustrates "formation depths and geometry —
+   illustrative", so it is captioned as such. Bands mirror geology.js; nothing is surveyed. */
+.core { margin: 30px 0 0; border-top: 1px solid var(--line); padding-top: 18px; }
+.core-stage { position: relative; height: clamp(280px, 34vw, 360px); border-radius: 12px;
+  overflow: hidden; background:
+    radial-gradient(120% 90% at 30% 12%, rgba(240,160,60,.10), transparent 58%),
+    linear-gradient(180deg, rgba(239,233,220,.045), rgba(6,15,20,.30));
+  border: 1px solid var(--line-soft); }
+.core-stage canvas { display: block; width: 100% !important; height: 100% !important; }
+.core-tag { position: absolute; left: 14px; top: 12px; margin: 0; font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--signal-soft); opacity: .82; }
+/* no WebGL: the section still shows flat strata rather than an empty box */
+.core--flat::after { content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(180deg,
+    #3A4740 0 7.6%, #4A3731 7.6% 15.2%, #35443F 15.2% 22.8%, #293C41 22.8% 30.4%,
+    #31423C 30.4% 38%, #263B3F 38% 45.6%, #22363B 45.6% 53.2%, #2A3F42 53.2% 60.8%,
+    #20323A 60.8% 68.4%, #1B2C34 68.4% 76%, #3a2f1a 76% 83.6%, #142229 83.6% 91.2%,
+    #101B23 91.2% 100%); opacity: .5; }
+.core figcaption { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: space-between;
+  margin-top: 12px; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.core-note { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10.5px;
+  letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+@media (max-width: 760px) { .core-stage { height: 300px; } }

@@ -233,6 +233,15 @@
             <li><span>Formation depths and geometry</span><span>Illustrative</span></li>
             <li><span>The approver — that is you clicking</span><span>Demo</span></li>
           </ul>
+          <figure class="core" aria-labelledby="core-cap">
+            <div class="core-stage" data-core-sample>
+              <p class="core-tag mono">Core sample</p>
+            </div>
+            <figcaption id="core-cap">
+              <span>Arab-D at 7,050 ft, turned as one core</span>
+              <span class="core-note">Procedural WebGL · illustrative, not surveyed</span>
+            </figcaption>
+          </figure>
         </div>
       </div>
     </div>
@@ -295,5 +304,23 @@
 <script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script type="module" src="src/app.js"></script>
+<script>
+/* core sample: three.js is 490 KB — load it only when the disclosure section approaches */
+(() => {
+  const fig = document.querySelector('[data-core-sample]');
+  if (!fig) return;
+  const load = () => {
+    if (document.querySelector('script[data-core]')) return;
+    const s = document.createElement('script');
+    s.src = 'assets/vendor/core-sample.js'; s.defer = true; s.dataset.core = '1';
+    document.head.append(s);
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) { io.disconnect(); load(); } },
+      { rootMargin: '700px' });
+    io.observe(fig);
+  } else { load(); }
+})();
+</script>
 </body>
 </html>
