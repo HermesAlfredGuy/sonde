@@ -123,6 +123,7 @@ if (gsap && ScrollTrigger) {
     scrub: 0.5,
     invalidateOnRefresh: true,
     onRefresh: () => {
+      measure();                    // travel must follow the plate's real height
       stageH = stageEl.clientHeight;
       svgH = secSVG.getBoundingClientRect().height;
       lastFt = -1;
@@ -147,6 +148,8 @@ if (gsap && ScrollTrigger) {
     },
   });
   st.refresh();
+  // the plate has no height until it decodes: re-measure once it does, or travel stays 0
+  if (!secSVG.complete) secSVG.addEventListener('load', () => { measure(); st.refresh(); }, { once: true });
 }
 
 /* ——————————————————————————————— tagline ——— */
