@@ -564,20 +564,26 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
   gBeds.append(gRes);
 
   const bx = 560;
-  /* the hole ends at the lateral. Carrying the casing past the heel to a notional TD
-     is what made the pipe look like it kept going down under its own curve. */
   const latY = ry + rh * 0.55;   // the lateral runs inside the Arab-D, not along its floor
-  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 3.2, height: latY + 30, fill: '#040E13' }));
-  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 0.6, height: latY + 30, fill: '#A9BDBC', opacity: '0.5' }));
-  gBeds.append(el('rect', { x: bx - 5, y: latY - 9, width: 10, height: 9, fill: '#040E13' }));
-  gBeds.append(el('rect', { x: bx - 1.6, y: latY, width: 332, height: 2.6, fill: '#040E13' }));
+  /* A horizontal well is drilled, not bent. The hole is vertical to a kick-off point,
+     builds angle over a few hundred feet of TVD, and only then runs horizontal; a
+     right-angle corner reads as a diagram, not a well. */
+  const kop = latY - 196;        // kick-off point, still above the Arab-D
+  const heelX = bx + 124;        // where the build reaches horizontal
+  const toeX = bx + 330;
+  const boreD = `M${bx} -30 V${kop} C${bx} ${kop + 112} ${bx + 52} ${latY} ${heelX} ${latY} H${toeX}`;
+  gBeds.append(el('path', { d: boreD, fill: 'none', stroke: '#040E13', 'stroke-width': 3.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  gBeds.append(el('path', { d: boreD, fill: 'none', stroke: '#A9BDBC', 'stroke-width': 0.7, opacity: '0.42', 'stroke-linecap': 'round' }));
+  gBeds.append(el('rect', { x: bx - 5.5, y: kop - 7, width: 11, height: 7, fill: '#040E13' }));   // casing shoe
+  gBeds.append(el('path', { d: `M${heelX} ${latY} H${toeX}`, stroke: '#F0A03C', 'stroke-width': 1.2, opacity: '0.42' }));
 
   BEDS.forEach((b) => {
     const y = yOf(b.d);
     const g = el('g', { class: 'sec-lbl' });
-    g.append(el('path', { d: `M${bx + 14} ${y} H${bx + 58}`, stroke: '#CFE0DC', 'stroke-width': '0.55', opacity: '0.28' }));
-    const t = el('text', { x: bx + 64, y: y + 4, class: 'lbl' }); t.append(txt(b.n));
-    const t2 = el('text', { x: bx + 64, y: y + 17, class: 'lbl dim' }); t2.append(txt(`${b.d.toLocaleString('en-US')} ft`));
+    // leaders start clear of the build section so no label crosses the pipe
+    g.append(el('path', { d: `M${bx + 122} ${y} H${bx + 166}`, stroke: '#CFE0DC', 'stroke-width': '0.55', opacity: '0.28' }));
+    const t = el('text', { x: bx + 172, y: y + 4, class: 'lbl' }); t.append(txt(b.n));
+    const t2 = el('text', { x: bx + 172, y: y + 17, class: 'lbl dim' }); t2.append(txt(`${b.d.toLocaleString('en-US')} ft`));
     g.append(t, t2);
     gBeds.append(g);
   });
@@ -585,10 +591,10 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
   // total depth is the heel: the hole stops where the lateral starts
   const td = latY;
   gBeds.append(el('path', { d: `M-20 ${td} H${w + 20}`, stroke: '#F0A03C', 'stroke-width': '0.9', opacity: '0.5', 'stroke-dasharray': '7 6' }));
-  gBeds.append(el('path', { d: `M${bx + 14} ${td} H${bx + 58}`, stroke: '#F0A03C', 'stroke-width': '0.7', opacity: '0.6' }));
-  const tdl = el('text', { x: bx + 64, y: td + 4, class: 'lbl', fill: '#F0A03C' });
+  gBeds.append(el('path', { d: `M${heelX + 8} ${td + 9} H${heelX + 52}`, stroke: '#F0A03C', 'stroke-width': 0.7, opacity: '0.6' }));
+  const tdl = el('text', { x: heelX + 58, y: td + 13, class: 'lbl', fill: '#F0A03C' });
   tdl.append(txt('Heel'));
-  const tdl2 = el('text', { x: bx + 64, y: td + 17, class: 'lbl dim' });
+  const tdl2 = el('text', { x: heelX + 58, y: td + 26, class: 'lbl dim' });
   tdl2.append(txt('landing point'));
   gBeds.append(tdl, tdl2);
 

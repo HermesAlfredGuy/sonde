@@ -2,7 +2,7 @@
    One timeline owner for scroll (GSAP ScrollTrigger); the demo is plain script;
    nothing is fetched. Full motion on every device by owner policy. */
 
-import { buildPlate, buildSection, formationAt, WELL_D } from './geology.js';
+import { buildPlate, buildSection, formationAt } from './geology.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -11,46 +11,22 @@ const ScrollTrigger = window.ScrollTrigger;
 if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
 /* ——————————————————————————————— hero plate ———
-   Desktop keeps the live plate: it owns the intro choreography. A phone has to
-   rasterise all of those SVG filters at 3× on every scrolled frame, so it gets the
-   same artwork baked once, plus a two-element overlay for the travelling pulse. */
+   The plate stays live vector on every device: it owns the intro choreography and
+   the fine hairlines of the drawing. The pulse reads its bore path so the marker
+   turns with the pipe instead of gliding past it. */
 const plateHost = $('.plate');
-const PHONE = () => window.matchMedia('(max-width: 860px)').matches;
-const PHONE_VB = '640 200 660 800';
-const SVGNS = 'http://www.w3.org/2000/svg';
-let borePath = null;
-let pulseGroup = null;
+const plate = buildPlate({ jitter: true });
+plateHost.append(plate);
 
-function svgEl(name, attrs = {}) {
-  const n = document.createElementNS(SVGNS, name);
-  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
-  return n;
+function fitPlate() {
+  const phone = window.matchMedia('(max-width: 860px)').matches;
+  plate.setAttribute('viewBox', phone ? '620 200 700 800' : '0 0 1600 1000');
 }
+fitPlate();
+window.addEventListener('resize', fitPlate);
 
-if (PHONE()) {
-  const img = new Image();
-  img.className = 'plate-img';
-  img.alt = '';
-  img.decoding = 'async';
-  img.src = 'assets/img/hero-plate-phone.webp';
-  plateHost.append(img);
-
-  const ov = svgEl('svg', { viewBox: PHONE_VB, preserveAspectRatio: 'xMidYMid slice', class: 'plate-overlay', 'aria-hidden': 'true' });
-  borePath = svgEl('path', { d: WELL_D, fill: 'none', stroke: 'none' });
-  pulseGroup = svgEl('g', { class: 'pulse', opacity: '0' });
-  pulseGroup.append(
-    svgEl('circle', { cx: 0, cy: 0, r: 3.4, fill: '#FFE0B4' }),
-    svgEl('circle', { cx: 0, cy: 0, r: 9.5, fill: 'none', stroke: '#F0A03C', 'stroke-width': 1, opacity: '0.5' }),
-    svgEl('path', { d: 'M0 -3 v-30', stroke: '#F0A03C', 'stroke-width': 1.4, opacity: '0.16' }),
-  );
-  ov.append(borePath, pulseGroup);
-  plateHost.append(ov);
-} else {
-  const plate = buildPlate({ jitter: true });
-  plateHost.append(plate);
-  borePath = plate.querySelector('.well-dark');
-  pulseGroup = plate.querySelector('.pulse');
-}
+const borePath = plate.querySelector('.well-dark');
+const pulseGroup = plate.querySelector('.pulse');
 
 /* ——————————————————————————————— intro ——— */
 const reduce = 1; // owner policy: full motion always
