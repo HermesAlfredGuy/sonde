@@ -560,11 +560,13 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
   gBeds.append(gRes);
 
   const bx = 560;
-  const tdY = yOf(12800);
-  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 3.2, height: tdY + 30, fill: '#040E13' }));
-  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 0.6, height: tdY + 30, fill: '#A9BDBC', opacity: '0.5' }));
-  gBeds.append(el('rect', { x: bx - 5, y: tdY - 9, width: 10, height: 9, fill: '#040E13' }));
-  gBeds.append(el('rect', { x: bx, y: ry + rh - 12, width: 330, height: 2.6, fill: '#040E13' }));
+  /* the hole ends at the lateral. Carrying the casing past the heel to a notional TD
+     is what made the pipe look like it kept going down under its own curve. */
+  const latY = ry + rh - 12;
+  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 3.2, height: latY + 30, fill: '#040E13' }));
+  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 0.6, height: latY + 30, fill: '#A9BDBC', opacity: '0.5' }));
+  gBeds.append(el('rect', { x: bx - 5, y: latY - 9, width: 10, height: 9, fill: '#040E13' }));
+  gBeds.append(el('rect', { x: bx - 1.6, y: latY, width: 332, height: 2.6, fill: '#040E13' }));
 
   BEDS.forEach((b) => {
     const y = yOf(b.d);
@@ -576,14 +578,14 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
     gBeds.append(g);
   });
 
-  // total depth: the bottom of the hole, where the descent ends
-  const td = yOf(12800);
+  // total depth is the heel: the hole stops where the lateral starts
+  const td = latY;
   gBeds.append(el('path', { d: `M-20 ${td} H${w + 20}`, stroke: '#F0A03C', 'stroke-width': '0.9', opacity: '0.5', 'stroke-dasharray': '7 6' }));
   gBeds.append(el('path', { d: `M${bx + 14} ${td} H${bx + 58}`, stroke: '#F0A03C', 'stroke-width': '0.7', opacity: '0.6' }));
   const tdl = el('text', { x: bx + 64, y: td + 4, class: 'lbl', fill: '#F0A03C' });
   tdl.append(txt('Total depth'));
   const tdl2 = el('text', { x: bx + 64, y: td + 17, class: 'lbl dim' });
-  tdl2.append(txt('12,800 ft'));
+  tdl2.append(txt('7,050 ft'));
   gBeds.append(tdl, tdl2);
 
   for (let ft = 0; ft <= 12000; ft += 500) {
