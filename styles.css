@@ -1004,7 +1004,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .descent-hud { top: auto; bottom: 1.25rem; right: var(--gutter); }
   .descent-hud .depth-read { font-size: 1.25rem; }
   .descent-hud .depth-read small { display: block; margin: 0.15rem 0 0; font-size: 0.6875rem; letter-spacing: 0.1em; }
-  .depth-cursor { top: auto; bottom: 1.6rem; right: 9.2%; width: 30%; }
+  /* the readout carries the depth on a phone; a rule through the label reads as a strikethrough */
+  .depth-cursor { display: none; }
   .chapters { padding-bottom: 4.5rem; align-items: flex-start; padding-top: 18vh; }
   .foot-links { gap: 1.1rem; }
 }
