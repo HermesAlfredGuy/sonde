@@ -552,7 +552,7 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
     gBeds.append(g);
   });
 
-  const ry = yOf(7900), rh = yOf(8700) - yOf(7900);
+  const ry = yOf(7050), rh = yOf(7350) - yOf(7050);   // the Arab-D band, where the lateral is completed
   const gRes = el('g', { class: 'sec-res' });
   gRes.append(el('ellipse', { cx: w / 2, cy: ry + rh / 2, rx: w * 0.52, ry: rh * 1.7, fill: '#F0A03C', opacity: '0.10', style: 'mix-blend-mode:screen' }));
   gRes.append(el('rect', { x: 90, y: ry + 18, width: w - 180, height: rh - 26, rx: 46, fill: '#F0A03C', opacity: '0.16' }));
