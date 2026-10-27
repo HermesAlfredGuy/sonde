@@ -1,5 +1,5 @@
 /* Sonde — cross-section artwork generator.
-   An illustrative (not surveyed) Eastern Province, Saudi Arabia section: stratified beds with regional dip,
+   An illustrative (not surveyed) Delaware Basin section: stratified beds with regional dip,
    an anticline trap, two normal faults, a producing well with a lateral, and an instrument
    layer. Deterministic, so the plate is identical on every load. */
 
@@ -25,36 +25,23 @@ function mulberry(seed) {
 const smooth = (x) => { const t = Math.min(1, Math.max(0, x)); return t * t * (3 - 2 * t); };
 
 /* —— stratigraphy ————————————————————————————————————————————
-   Depths are plausible Eastern Province (Ghawar-area) values; geometry is illustrative. */
+   Depths are plausible Permian Basin values; geometry is illustrative. */
 const GROUND = 292;
-
-/* The hero bore, in the hero plate's own user units (1600 × 1000). Exported so the
-   travelling pulse can ride the real path — including the turn into the lateral —
-   instead of dropping straight down past the heel. */
-export const WELL_D = 'M1090 249 V638 C1090 694 1064 707 986 707 H844';
 const FORMATIONS = [
-  { name: 'Alluvium',       y0: GROUND, depth: 0,    thick: 8,   c: '#2E3A36', grain: 0.30 },
-  { name: 'Dammam',         y0: 300,    depth: 810,  thick: 30,  c: '#4A3731', grain: 0.34 },
-  { name: 'Umm er Radhuma', y0: 330,    depth: 1290, thick: 22,  c: '#35443F', grain: 0.34 },
-  { name: 'Aruma',          y0: 352,    depth: 1650, thick: 34,  c: '#293C41', grain: 0.32 },
-  { name: 'Wasia',          y0: 386,    depth: 2190, thick: 24,  c: '#31423C', grain: 0.32 },
-  { name: "Shu'aiba",       y0: 410,    depth: 2570, thick: 22,  c: '#263B3F', grain: 0.30 },
-  { name: 'Biyadh',         y0: 432,    depth: 2920, thick: 46,  c: '#22363B', grain: 0.28 },
-  { name: 'Sulaiy',         y0: 478,    depth: 3660, thick: 62,  c: '#2A3F42', grain: 0.26 },
-  { name: 'Yamama',         y0: 540,    depth: 4650, thick: 54,  c: '#20323A', grain: 0.24 },
-  { name: 'Hith',           y0: 594,    depth: 5510, thick: 96,  c: '#1B2C34', grain: 0.22 },
-  { name: 'Arab-D',         y0: 690,    depth: 7050, thick: 40,  c: '#172831', grain: 0.20, reservoir: true },
-  { name: 'Jubaila',        y0: 730,    depth: 7690, thick: 38,  c: '#142229', grain: 0.18 },
-  { name: 'Khuff',          y0: 768,    depth: 8290, thick: 232, c: '#101B23', grain: 0.14 },
+  { name: 'Alluvium',      y0: GROUND, depth: 0,    thick: 8,   c: '#2E3A36', grain: 0.30 },
+  { name: 'Dockum',        y0: 300,    depth: 190,  thick: 30,  c: '#4A3731', grain: 0.34 },
+  { name: 'Santa Rosa',    y0: 330,    depth: 830,  thick: 22,  c: '#35443F', grain: 0.34 },
+  { name: 'Yates',         y0: 352,    depth: 1300, thick: 34,  c: '#293C41', grain: 0.32 },
+  { name: 'Seven Rivers',  y0: 386,    depth: 1980, thick: 24,  c: '#31423C', grain: 0.32 },
+  { name: 'Grayburg',      y0: 410,    depth: 2460, thick: 22,  c: '#263B3F', grain: 0.30 },
+  { name: 'Queen',         y0: 432,    depth: 2900, thick: 46,  c: '#22363B', grain: 0.28 },
+  { name: 'Cherry Canyon', y0: 478,    depth: 3840, thick: 62,  c: '#2A3F42', grain: 0.26 },
+  { name: 'Bell Canyon',   y0: 540,    depth: 5100, thick: 54,  c: '#20323A', grain: 0.24 },
+  { name: 'Bone Spring',   y0: 594,    depth: 6190, thick: 96,  c: '#1B2C34', grain: 0.22 },
+  { name: 'Wolfcamp A',    y0: 690,    depth: 7900, thick: 40,  c: '#172831', grain: 0.20, reservoir: true },
+  { name: 'Wolfcamp B',    y0: 730,    depth: 8700, thick: 38,  c: '#142229', grain: 0.18 },
+  { name: 'Ellenburger',   y0: 768,    depth: 9400, thick: 232, c: '#101B23', grain: 0.14 },
 ];
-
-
-/* the formation a given depth sits in — used by the descent HUD */
-export function formationAt(ft) {
-  let hit = FORMATIONS[0];
-  for (const f of FORMATIONS) if (ft >= f.depth) hit = f;
-  return { name: hit.name, depth: hit.depth, reservoir: !!hit.reservoir };
-}
 
 /* Normal faults: tip depth, throw, dip as dx per dy. */
 const FAULTS = [
@@ -112,7 +99,7 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
   const px = 1090;
   const root = el('svg', {
     viewBox: '0 0 1600 1000', preserveAspectRatio: 'xMidYMid slice', class: 'plate-svg',
-    role: 'img', 'aria-label': 'Illustrative cross section: a producing well descends through twelve sedimentary formations into the Arab-D limestone of eastern Saudi Arabia, where a horizontal lateral is completed.',
+    role: 'img', 'aria-label': 'Illustrative cross section: a producing well descends through twelve sedimentary formations into the Wolfcamp, where a horizontal lateral is completed.',
   });
   const defs = el('defs');
 
@@ -385,7 +372,7 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
     }));
   });
 
-  /* —— reservoir: anticline trap in the Arab-D —— */
+  /* —— reservoir: anticline trap in the Wolfcamp —— */
   const ri = FORMATIONS.findIndex((f) => f.reservoir);
   const topR = boundaryPath(ri, cfg), botR = boundaryPath(ri + 1, cfg);
   const keep = topR.map(([x], k) => Math.exp(-Math.pow((x - CREST_X) / 420, 2)) > 0.30);
@@ -413,7 +400,7 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
     }));
   }
   gRes.append(resLam);
-  gRes.append(el('ellipse', { cx: CREST_X + 130, cy: 712, rx: 190, ry: 26, fill: '#FFD79B', opacity: '0.16', filter: 'url(#soft)', style: 'mix-blend-mode:screen', class: 'res-core' }));
+  gRes.append(el('ellipse', { cx: CREST_X - 60, cy: 706, rx: 210, ry: 30, fill: '#FFD79B', opacity: '0.22', filter: 'url(#soft)', style: 'mix-blend-mode:screen', class: 'res-core' }));
   gRes.append(el('path', { d: resTop, fill: 'none', stroke: 'url(#resEdge)', 'stroke-width': '1.8', class: 'res-crest' }));
   gRes.append(el('path', { d: `M${CREST_X - 290} 727 H${CREST_X + 250}`, stroke: '#F0A03C', 'stroke-width': '0.6', 'stroke-dasharray': '4 5', opacity: '0.4' }));
   // the beds that bound the reservoir catch its light
@@ -422,14 +409,12 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
 
   /* —— well: casing, lateral, perforations, pulse —— */
   const topSurf = GROUND - 1;
-  // one continuous string: casing → heel → lateral. The casing must stop exactly at the
-  // heel tangent (646) or the overshoot reads as a second pipe continuing down the hole.
-  const HEEL = 646;
-
-  // one continuous stroke from surface to toe: same weight through the heel, no join
-  const wellPath = WELL_D;
-  gBore.append(el('path', { d: wellPath, fill: 'none', stroke: '#040E13', 'stroke-width': '2.4', 'stroke-linejoin': 'round', 'stroke-linecap': 'round', pathLength: '1', class: 'well-dark' }));
-  gBore.append(el('path', { d: wellPath, fill: 'none', stroke: '#A9BDBC', 'stroke-width': '0.5', opacity: '0.42', 'stroke-linecap': 'round', pathLength: '1', class: 'well-line' }));
+  const casing = `M${px} 249 V684`;
+  gBore.append(el('path', { d: casing, fill: 'none', stroke: '#040E13', 'stroke-width': '3', class: 'casing-dark' }));
+  gBore.append(el('path', { d: casing, fill: 'none', stroke: '#A9BDBC', 'stroke-width': '0.55', opacity: '0.55', class: 'casing-line' }));
+  const lateral = `M${px} 646 C${px} 694 ${px - 26} 707 ${px - 104} 707 H${px - 246}`;
+  gBore.append(el('path', { d: lateral, fill: 'none', stroke: '#040E13', 'stroke-width': '1.9', class: 'lateral-dark' }));
+  gBore.append(el('path', { d: lateral, fill: 'none', stroke: '#A9BDBC', 'stroke-width': '0.45', opacity: '0.45', class: 'lateral-line' }));
   // four perforation stages, irregular like a real completion
   [[46, 5], [96, 4], [148, 6], [200, 4]].forEach(([dx, n]) => {
     for (let k = 0; k < n; k++) {
@@ -437,8 +422,8 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
       gBore.append(el('path', { d: `M${x} 708 v7`, stroke: '#F0A03C', 'stroke-width': '0.9', opacity: '0.32', class: 'perf' }));
     }
   });
-  // heat follows the bend into the lateral — no stub hanging below the elbow
-  gBore.append(el('path', { d: `M${px} ${HEEL - 8} C${px} 694 ${px - 26} 707 ${px - 104} 707`, fill: 'none', stroke: '#FFD79B', 'stroke-width': '1.3', opacity: '0.55', filter: 'url(#soft)', class: 'casing-hot' }));
+  // the casing runs hot where it crosses the reservoir
+  gBore.append(el('path', { d: `M${px} 686 V707`, stroke: '#FFD79B', 'stroke-width': '1.3', opacity: '0.55', filter: 'url(#soft)', class: 'casing-hot' }));
   gBore.append(el('g', { class: 'pulse', opacity: '0' }, [
     el('circle', { cx: px, cy: 300, r: 2.6, fill: '#FFE0B4' }),
     el('circle', { cx: px, cy: 300, r: 7.5, fill: 'none', stroke: '#F0A03C', 'stroke-width': '0.9', opacity: '0.5' }),
@@ -446,7 +431,7 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
   ]));
 
   /* —— annotation —— */
-  const ftAt = (y) => Math.round(((y - GROUND) / (1000 - GROUND)) * 12000 / 100) * 100;
+  const ftAt = (y) => Math.round(((y - GROUND) / (1000 - GROUND)) * 14000 / 100) * 100;
   const annotate = (i, label, depth, dy = 0) => {
     const y = boundaryY(CREST_X, i, cfg) + dy;
     const g = el('g', { class: 'annot' });
@@ -459,9 +444,9 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
     return g;
   };
   gLabels.append(
-    annotate(9, 'HITH', 5510, 1),
-    annotate(10, 'ARAB-D', 7050, 2),
-    annotate(12, 'KHUFF', 8290, 1),
+    annotate(9, 'BONE SPRING', 6190, 1),
+    annotate(10, 'WOLFCAMP A', 7900, 2),
+    annotate(12, 'ELLENBURGER', 9400, 1),
   );
 
   const gRuler = el('g', { class: 'ruler' });
@@ -494,7 +479,7 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
 
 /* ================================================================
    Descent section for the pinned chapter. Surface at y=0,
-   12,000 ft at y=2600, bore at x=560 (1200 wide).
+   14,000 ft at y=2600, bore at x=560 (1200 wide).
    ================================================================ */
 export function buildSection({ w = 1200, h = 2600 } = {}) {
   const rand = mulberry(77123);
@@ -523,20 +508,20 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
 
   const BEDS = [
     { n: 'Alluvium', d: 0, c: '#2E3A36' },
-    { n: 'Dammam', d: 810, c: '#4A3731' },
-    { n: 'Umm er Radhuma', d: 1290, c: '#35443F' },
-    { n: 'Aruma', d: 1650, c: '#293C41' },
-    { n: 'Wasia', d: 2190, c: '#31423C' },
-    { n: "Shu'aiba", d: 2570, c: '#263B3F' },
-    { n: 'Biyadh', d: 2920, c: '#22363B' },
-    { n: 'Sulaiy', d: 3660, c: '#2A3F42' },
-    { n: 'Yamama', d: 4650, c: '#20323A' },
-    { n: 'Hith', d: 5510, c: '#1B2C34' },
-    { n: 'Arab-D', d: 7050, c: '#172831', res: true },
-    { n: 'Jubaila', d: 7690, c: '#142229' },
-    { n: 'Khuff', d: 8290, c: '#101B23' },
+    { n: 'Dockum', d: 300, c: '#4A3731' },
+    { n: 'Santa Rosa', d: 1450, c: '#35443F' },
+    { n: 'Yates', d: 2350, c: '#293C41' },
+    { n: 'Seven Rivers', d: 3050, c: '#31423C' },
+    { n: 'Grayburg', d: 3600, c: '#263B3F' },
+    { n: 'Queen', d: 4150, c: '#22363B' },
+    { n: 'Cherry Canyon', d: 4800, c: '#2A3F42' },
+    { n: 'Bell Canyon', d: 5450, c: '#20323A' },
+    { n: 'Bone Spring', d: 6190, c: '#1B2C34' },
+    { n: 'Wolfcamp A', d: 7900, c: '#172831', res: true },
+    { n: 'Wolfcamp B', d: 8700, c: '#142229' },
+    { n: 'Ellenburger', d: 9400, c: '#101B23' },
   ];
-  const yOf = (ft) => (ft / 12000) * h;
+  const yOf = (ft) => (ft / 14000) * h;
 
   const gBeds = el('g', { class: 'sec-beds', filter: 'url(#secRough)' });
   BEDS.forEach((b, i) => {
@@ -556,7 +541,7 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
     gBeds.append(g);
   });
 
-  const ry = yOf(7050), rh = yOf(7350) - yOf(7050);   // the Arab-D band, where the lateral is completed
+  const ry = yOf(7900), rh = yOf(8700) - yOf(7900);
   const gRes = el('g', { class: 'sec-res' });
   gRes.append(el('ellipse', { cx: w / 2, cy: ry + rh / 2, rx: w * 0.52, ry: rh * 1.7, fill: '#F0A03C', opacity: '0.10', style: 'mix-blend-mode:screen' }));
   gRes.append(el('rect', { x: 90, y: ry + 18, width: w - 180, height: rh - 26, rx: 46, fill: '#F0A03C', opacity: '0.16' }));
@@ -564,41 +549,33 @@ export function buildSection({ w = 1200, h = 2600 } = {}) {
   gBeds.append(gRes);
 
   const bx = 560;
-  const latY = ry + rh * 0.55;   // the lateral runs inside the Arab-D, not along its floor
-  /* A horizontal well is drilled, not bent. The hole is vertical to a kick-off point,
-     builds angle over a few hundred feet of TVD, and only then runs horizontal; a
-     right-angle corner reads as a diagram, not a well. */
-  const kop = latY - 196;        // kick-off point, still above the Arab-D
-  const heelX = bx + 124;        // where the build reaches horizontal
-  const toeX = bx + 330;
-  const boreD = `M${bx} -30 V${kop} C${bx} ${kop + 112} ${bx + 52} ${latY} ${heelX} ${latY} H${toeX}`;
-  gBeds.append(el('path', { d: boreD, fill: 'none', stroke: '#040E13', 'stroke-width': 3.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
-  gBeds.append(el('path', { d: boreD, fill: 'none', stroke: '#A9BDBC', 'stroke-width': 0.7, opacity: '0.42', 'stroke-linecap': 'round' }));
-  gBeds.append(el('rect', { x: bx - 5.5, y: kop - 7, width: 11, height: 7, fill: '#040E13' }));   // casing shoe
-  gBeds.append(el('path', { d: `M${heelX} ${latY} H${toeX}`, stroke: '#F0A03C', 'stroke-width': 1.2, opacity: '0.42' }));
+  const tdY = yOf(12800);
+  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 3.2, height: tdY + 30, fill: '#040E13' }));
+  gBeds.append(el('rect', { x: bx - 1.6, y: -30, width: 0.6, height: tdY + 30, fill: '#A9BDBC', opacity: '0.5' }));
+  gBeds.append(el('rect', { x: bx - 5, y: tdY - 9, width: 10, height: 9, fill: '#040E13' }));
+  gBeds.append(el('rect', { x: bx, y: ry + rh - 12, width: 330, height: 2.6, fill: '#040E13' }));
 
   BEDS.forEach((b) => {
     const y = yOf(b.d);
     const g = el('g', { class: 'sec-lbl' });
-    // leaders start clear of the build section so no label crosses the pipe
-    g.append(el('path', { d: `M${bx + 122} ${y} H${bx + 166}`, stroke: '#CFE0DC', 'stroke-width': '0.55', opacity: '0.28' }));
-    const t = el('text', { x: bx + 172, y: y + 4, class: 'lbl' }); t.append(txt(b.n));
-    const t2 = el('text', { x: bx + 172, y: y + 17, class: 'lbl dim' }); t2.append(txt(`${b.d.toLocaleString('en-US')} ft`));
+    g.append(el('path', { d: `M${bx + 14} ${y} H${bx + 58}`, stroke: '#CFE0DC', 'stroke-width': '0.55', opacity: '0.28' }));
+    const t = el('text', { x: bx + 64, y: y + 4, class: 'lbl' }); t.append(txt(b.n));
+    const t2 = el('text', { x: bx + 64, y: y + 17, class: 'lbl dim' }); t2.append(txt(`${b.d.toLocaleString('en-US')} ft`));
     g.append(t, t2);
     gBeds.append(g);
   });
 
-  // total depth is the heel: the hole stops where the lateral starts
-  const td = latY;
+  // total depth: the bottom of the hole, where the descent ends
+  const td = yOf(12800);
   gBeds.append(el('path', { d: `M-20 ${td} H${w + 20}`, stroke: '#F0A03C', 'stroke-width': '0.9', opacity: '0.5', 'stroke-dasharray': '7 6' }));
-  gBeds.append(el('path', { d: `M${heelX + 8} ${td + 9} H${heelX + 52}`, stroke: '#F0A03C', 'stroke-width': 0.7, opacity: '0.6' }));
-  const tdl = el('text', { x: heelX + 58, y: td + 13, class: 'lbl', fill: '#F0A03C' });
-  tdl.append(txt('Heel'));
-  const tdl2 = el('text', { x: heelX + 58, y: td + 26, class: 'lbl dim' });
-  tdl2.append(txt('landing point'));
+  gBeds.append(el('path', { d: `M${bx + 14} ${td} H${bx + 58}`, stroke: '#F0A03C', 'stroke-width': '0.7', opacity: '0.6' }));
+  const tdl = el('text', { x: bx + 64, y: td + 4, class: 'lbl', fill: '#F0A03C' });
+  tdl.append(txt('Total depth'));
+  const tdl2 = el('text', { x: bx + 64, y: td + 17, class: 'lbl dim' });
+  tdl2.append(txt('12,800 ft'));
   gBeds.append(tdl, tdl2);
 
-  for (let ft = 0; ft <= 12000; ft += 500) {
+  for (let ft = 0; ft <= 14000; ft += 500) {
     const y = yOf(ft), major = ft % 2000 === 0;
     gBeds.append(el('path', { d: `M${w - 54} ${y} H${w - 8}`, stroke: '#8FA3A3', 'stroke-width': '0.6', opacity: major ? '0.36' : '0.13' }));
     if (major) {
