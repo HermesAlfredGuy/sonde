@@ -27,6 +27,11 @@ const smooth = (x) => { const t = Math.min(1, Math.max(0, x)); return t * t * (3
 /* —— stratigraphy ————————————————————————————————————————————
    Depths are plausible Eastern Province (Ghawar-area) values; geometry is illustrative. */
 const GROUND = 292;
+
+/* The hero bore, in the hero plate's own user units (1600 × 1000). Exported so the
+   travelling pulse can ride the real path — including the turn into the lateral —
+   instead of dropping straight down past the heel. */
+export const WELL_D = 'M1090 249 V638 C1090 694 1064 707 986 707 H844';
 const FORMATIONS = [
   { name: 'Alluvium',       y0: GROUND, depth: 0,    thick: 8,   c: '#2E3A36', grain: 0.30 },
   { name: 'Dammam',         y0: 300,    depth: 810,  thick: 30,  c: '#4A3731', grain: 0.34 },
@@ -421,9 +426,8 @@ export function buildPlate({ jitter = true, withSky = true } = {}) {
   // heel tangent (646) or the overshoot reads as a second pipe continuing down the hole.
   const HEEL = 646;
 
-  const lateral = `M${px} ${HEEL - 8} C${px} 694 ${px - 26} 707 ${px - 104} 707 H${px - 246}`;
   // one continuous stroke from surface to toe: same weight through the heel, no join
-  const wellPath = `M${px} 249 V${HEEL - 8} C${px} 694 ${px - 26} 707 ${px - 104} 707 H${px - 246}`;
+  const wellPath = WELL_D;
   gBore.append(el('path', { d: wellPath, fill: 'none', stroke: '#040E13', 'stroke-width': '2.4', 'stroke-linejoin': 'round', 'stroke-linecap': 'round', pathLength: '1', class: 'well-dark' }));
   gBore.append(el('path', { d: wellPath, fill: 'none', stroke: '#A9BDBC', 'stroke-width': '0.5', opacity: '0.42', 'stroke-linecap': 'round', pathLength: '1', class: 'well-line' }));
   // four perforation stages, irregular like a real completion

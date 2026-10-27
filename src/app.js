@@ -2,7 +2,7 @@
    One timeline owner for scroll (GSAP ScrollTrigger); the demo is plain script;
    nothing is fetched. Full motion on every device by owner policy. */
 
-import { buildPlate, buildSection, formationAt } from './geology.js';
+import { buildPlate, buildSection, formationAt, WELL_D } from './geology.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -10,17 +10,47 @@ const gsap = window.gsap;
 const ScrollTrigger = window.ScrollTrigger;
 if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
-/* ——————————————————————————————— hero plate ——— */
+/* ——————————————————————————————— hero plate ———
+   Desktop keeps the live plate: it owns the intro choreography. A phone has to
+   rasterise all of those SVG filters at 3× on every scrolled frame, so it gets the
+   same artwork baked once, plus a two-element overlay for the travelling pulse. */
 const plateHost = $('.plate');
-const plate = buildPlate({ jitter: true });
-plateHost.append(plate);
+const PHONE = () => window.matchMedia('(max-width: 860px)').matches;
+const PHONE_VB = '640 200 660 800';
+const SVGNS = 'http://www.w3.org/2000/svg';
+let borePath = null;
+let pulseGroup = null;
 
-function fitPlate() {
-  const phone = window.matchMedia('(max-width: 860px)').matches;
-  plate.setAttribute('viewBox', phone ? '620 200 700 800' : '0 0 1600 1000');
+function svgEl(name, attrs = {}) {
+  const n = document.createElementNS(SVGNS, name);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  return n;
 }
-fitPlate();
-window.addEventListener('resize', fitPlate);
+
+if (PHONE()) {
+  const img = new Image();
+  img.className = 'plate-img';
+  img.alt = '';
+  img.decoding = 'async';
+  img.src = 'assets/img/hero-plate-phone.webp';
+  plateHost.append(img);
+
+  const ov = svgEl('svg', { viewBox: PHONE_VB, preserveAspectRatio: 'xMidYMid slice', class: 'plate-overlay', 'aria-hidden': 'true' });
+  borePath = svgEl('path', { d: WELL_D, fill: 'none', stroke: 'none' });
+  pulseGroup = svgEl('g', { class: 'pulse', opacity: '0' });
+  pulseGroup.append(
+    svgEl('circle', { cx: 0, cy: 0, r: 3.4, fill: '#FFE0B4' }),
+    svgEl('circle', { cx: 0, cy: 0, r: 9.5, fill: 'none', stroke: '#F0A03C', 'stroke-width': 1, opacity: '0.5' }),
+    svgEl('path', { d: 'M0 -3 v-30', stroke: '#F0A03C', 'stroke-width': 1.4, opacity: '0.16' }),
+  );
+  ov.append(borePath, pulseGroup);
+  plateHost.append(ov);
+} else {
+  const plate = buildPlate({ jitter: true });
+  plateHost.append(plate);
+  borePath = plate.querySelector('.well-dark');
+  pulseGroup = plate.querySelector('.pulse');
+}
 
 /* ——————————————————————————————— intro ——— */
 const reduce = 1; // owner policy: full motion always
@@ -48,14 +78,24 @@ if (intro) {
     .from('.hero .micro', { opacity: 0, duration: 0.8 }, 1.45)
     .from('.hero-foot > *', { y: 12, opacity: 0, duration: 0.9, stagger: 0.06 }, 1.35);
 
-  /* the query pulse, forever: down the bore, then the reservoir answers */
-  const pulse = $('.pulse');
-  if (pulse) {
+  /* the query pulse: rides the real bore, through the heel and along the lateral.
+     It used to translate straight down, which left it gliding past the turn on a
+     pipe that no longer exists. */
+  if (pulseGroup && borePath) {
+    const baseX = Number(pulseGroup.firstElementChild.getAttribute('cx') || 0);
+    const baseY = Number(pulseGroup.firstElementChild.getAttribute('cy') || 0);
+    const len = borePath.getTotalLength();
+    const proxy = { t: 0 };
+    const place = () => {
+      const pt = borePath.getPointAtLength(proxy.t * len);
+      pulseGroup.setAttribute('transform', `translate(${pt.x - baseX} ${pt.y - baseY})`);
+    };
+    place();
     gsap.timeline({ repeat: -1, repeatDelay: 3.2, delay: 3.4 })
-      .fromTo(pulse, { opacity: 0, y: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
-      .to(pulse, { y: 404, duration: 2.5, ease: 'power2.inOut' }, 0.2)
-      .to(pulse, { opacity: 0, duration: 0.6 }, 2.5)
-      .fromTo('.res-core', { opacity: 0.1, scale: 0.92 }, { opacity: 0.45, scale: 1.06, duration: 0.9, yoyo: true, repeat: 1, transformOrigin: 'center', ease: 'sine.inOut' }, 2.3);
+      .fromTo(pulseGroup, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0)
+      .fromTo(proxy, { t: 0 }, { t: 1, duration: 3.2, ease: 'power2.inOut', onUpdate: place }, 0.2)
+      .to(pulseGroup, { opacity: 0, duration: 0.6 }, 3.3)
+      .fromTo('.res-core', { opacity: 0.1, scale: 0.92 }, { opacity: 0.45, scale: 1.06, duration: 0.9, yoyo: true, repeat: 1, transformOrigin: 'center', ease: 'sine.inOut' }, 2.9);
   }
   /* the flare breathes, slowly — well under three flashes a second */
   gsap.to('.flare', { opacity: 0.72, scale: 1.05, transformOrigin: 'center', duration: 2.6, repeat: -1, yoyo: true, ease: 'sine.inOut' });
@@ -115,6 +155,7 @@ if (gsap && ScrollTrigger) {
     shift: gsap.quickTo(ch, 'y', { duration: 0.34, ease: 'power2.out', overwrite: true }),
   }));
   let lastFt = -1;
+  const hudEl = document.querySelector('.descent-hud');
 
   const st = ScrollTrigger.create({
     trigger: '.descent-track',
@@ -145,6 +186,9 @@ if (gsap && ScrollTrigger) {
         chTween[i].alpha(on ? 1 : 0);
         chTween[i].shift(on ? 0 : (p < centre ? 22 : -22));
       }
+      // the readout belongs to the descent: retire it before the next section arrives,
+      // otherwise it sits on top of the demo copy as the track ends
+      if (hudEl) hudEl.style.opacity = p > 0.94 ? String(Math.max(0, (1 - p) / 0.06)) : '1';
     },
   });
   st.refresh();
